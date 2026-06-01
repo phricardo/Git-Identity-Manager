@@ -65,14 +65,6 @@ function hasGithubAccount(accounts: Array<{ username: string; host: string }>, u
   );
 }
 
-function getActiveGithubUser(auth: { activeUser?: string | null; accounts: Array<{ username: string; host: string; active: boolean }> }) {
-  return auth.activeUser ?? auth.accounts.find((account) => account.host === "github.com" && account.active)?.username ?? null;
-}
-
-function sameLogin(left?: string | null, right?: string | null) {
-  return Boolean(left && right && left.toLowerCase() === right.toLowerCase());
-}
-
 function FeedbackBanner({
   variant,
   title,
@@ -197,13 +189,6 @@ function Home({ state }: Props) {
 
           if (hasGithubAccount(auth.accounts, input.githubUsername)) {
             break;
-          }
-
-          const activeGithubUser = getActiveGithubUser(auth);
-          if (activeGithubUser && !sameLogin(activeGithubUser, input.githubUsername)) {
-            throw new Error(
-              `Login confirmado como ${activeGithubUser}, mas o perfil foi preenchido com ${input.githubUsername}. Corrija o usuario do GitHub e tente novamente.`,
-            );
           }
         }
 

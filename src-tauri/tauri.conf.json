@@ -26,6 +26,7 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "publisher": "phricardo.com",
     "icon": [
       "icons/icon.ico"
     ]
