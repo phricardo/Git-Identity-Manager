@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows installers
+    runs-on: windows-latest
+    if: startsWith(github.event.release.name, 'v')
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate release tag
+        id: version
+        shell: pwsh
+        run: |
+          $tag = "${{ github.event.release.tag_name }}"
+
+          if ($tag -notmatch '^v[0-9]+\.[0-9]+\.[0-9]+$') {
+            throw "Release tag '$tag' must match vX.Y.Z, for example v1.0.1."
+          }
+
+          $version = $tag.Substring(1)
+          "version=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Write release version config
+        shell: pwsh
+        run: |
+          $version = "${{ steps.version.outputs.version }}"
+          "{ `"version`": `"$version`" }" | Set-Content -Path src-tauri/tauri.release.conf.json -Encoding UTF8
+
+      - name: Build and upload Windows release assets
+        uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          releaseId: ${{ github.event.release.id }}
+          tagName: ${{ github.event.release.tag_name }}
+          tauriScript: npm run tauri --
+          args: --config src-tauri/tauri.release.conf.json
+          releaseAssetNamePattern: "[name]_[version]_[platform]_[arch][_setup][ext]"
+          retryAttempts: 2

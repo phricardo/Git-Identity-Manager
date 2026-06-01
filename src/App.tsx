@@ -64,7 +64,7 @@ function App() {
             </div>
             <div>
               <strong>Git Identity Manager</strong>
-              <span>Windows MVP</span>
+              <span>Versão Beta</span>
             </div>
           </div>
 
