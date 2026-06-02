@@ -50,7 +50,7 @@ jobs:
           "{ `"version`": `"$version`" }" | Set-Content -Path src-tauri/tauri.release.conf.json -Encoding UTF8
 
       - name: Build and upload Windows release assets
-        uses: tauri-apps/tauri-action@v1
+        uses: tauri-apps/tauri-action@v0.6.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -58,5 +58,5 @@ jobs:
           tagName: ${{ github.event.release.tag_name }}
           tauriScript: npm run tauri --
           args: --config src-tauri/tauri.release.conf.json
-          releaseAssetNamePattern: "[name]_[version]_[platform]_[arch][_setup][ext]"
+          assetNamePattern: "[name]_[version]_[platform]_[arch][_setup][ext]"
           retryAttempts: 2
