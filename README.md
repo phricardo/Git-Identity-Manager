@@ -1,5 +1,9 @@
 # Git Identity Manager
 
+<p align="left">
+  <img src=".github/logo.svg" alt="Git Identity Manager" width="522">
+</p>
+
 Desktop app for managing Git identities and GitHub CLI accounts on Windows.
 
 ## Overview
