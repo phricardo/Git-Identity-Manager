@@ -5,18 +5,19 @@ use crate::{
         CredentialEntry, DependencyInfo, DependencyStatus, GhAuthStatus, GithubLoginStartResult,
         PrepareProfileCreationResult, Profile, ProfileInput, RepoDiagnostic, ResetAppStateResult,
     },
-    platform::windows::{
-        delete_profile_by_id, global_gitconfig_path_for_command, open_path_with_system,
-        read_profiles, reset_app_state as reset_windows_app_state, save_profile_input,
-        WindowsCredentialProvider, WindowsGhProvider, WindowsGitConfigProvider, WindowsGitProvider,
+    platform::{
+        delete_profile_by_id, global_gitconfig_path_for_command, home_dir, open_path_with_system,
+        read_profiles, reset_app_state as reset_platform_app_state, save_profile_input,
+        PlatformCredentialProvider, PlatformGhProvider, PlatformGitConfigProvider,
+        PlatformGitProvider,
     },
     providers::{CredentialProvider, GhProvider, GitConfigProvider, GitProvider},
 };
 
 #[tauri::command]
 pub fn check_dependencies() -> AppResult<DependencyStatus> {
-    let git_provider = WindowsGitProvider;
-    let gh_provider = WindowsGhProvider;
+    let git_provider = PlatformGitProvider;
+    let gh_provider = PlatformGhProvider;
     Ok(DependencyStatus {
         git: dependency_info(git_provider.get_version()),
         gh: dependency_info(gh_provider.get_version()),
@@ -37,8 +38,8 @@ pub fn save_profile(profile: ProfileInput) -> AppResult<Profile> {
 pub fn prepare_profile_creation(
     input: CreateProfileWithAuthInput,
 ) -> AppResult<PrepareProfileCreationResult> {
-    let git_provider = WindowsGitProvider;
-    let gh_provider = WindowsGhProvider;
+    let git_provider = PlatformGitProvider;
+    let gh_provider = PlatformGhProvider;
     git_provider.get_version()?;
     gh_provider.get_version()?;
     validate_create_profile_input(&input)?;
@@ -69,7 +70,7 @@ pub fn prepare_profile_creation(
 
 #[tauri::command]
 pub fn start_profile_github_login() -> AppResult<GithubLoginStartResult> {
-    let gh_provider = WindowsGhProvider;
+    let gh_provider = PlatformGhProvider;
     gh_provider.get_version()?;
     gh_provider.start_login_web()
 }
@@ -79,7 +80,7 @@ pub fn finish_profile_creation(
     input: CreateProfileWithAuthInput,
     _previous_active_user: Option<String>,
 ) -> AppResult<CreateProfileWithAuthResult> {
-    let gh_provider = WindowsGhProvider;
+    let gh_provider = PlatformGhProvider;
     validate_create_profile_input(&input)?;
 
     let requested_user = input.github_username.trim().to_string();
@@ -97,14 +98,13 @@ pub fn finish_profile_creation(
         github_username: requested_user,
         git_user_name: input.profile_name.trim().to_string(),
         git_user_email: input.git_user_email.trim().to_string(),
-        base_path: crate::platform::windows::home_dir()?
-            .to_string_lossy()
-            .to_string(),
+        base_path: home_dir()?.to_string_lossy().to_string(),
     })?;
 
     gh_provider.switch_user(&profile.github_username)?;
+    gh_provider.ensure_required_scopes(&profile.github_username)?;
     gh_provider.setup_git()?;
-    WindowsGitConfigProvider.write_profile_config(&profile.id)?;
+    PlatformGitConfigProvider.write_profile_config(&profile.id)?;
 
     let required_login = !status.accounts.iter().any(|account| {
         account
@@ -124,8 +124,8 @@ pub fn finish_profile_creation(
 pub fn create_profile_with_auth(
     input: CreateProfileWithAuthInput,
 ) -> AppResult<CreateProfileWithAuthResult> {
-    let git_provider = WindowsGitProvider;
-    let gh_provider = WindowsGhProvider;
+    let git_provider = PlatformGitProvider;
+    let gh_provider = PlatformGhProvider;
     git_provider.get_version()?;
     gh_provider.get_version()?;
 
@@ -149,22 +149,20 @@ pub fn create_profile_with_auth(
         ));
     }
 
-    gh_provider.setup_git()?;
-
     let profile = save_profile_input(ProfileInput {
         id: None,
         profile_name: input.profile_name.trim().to_string(),
         github_username: requested_user.clone(),
         git_user_name: input.profile_name.trim().to_string(),
         git_user_email: input.git_user_email.trim().to_string(),
-        base_path: crate::platform::windows::home_dir()?
-            .to_string_lossy()
-            .to_string(),
+        base_path: home_dir()?.to_string_lossy().to_string(),
     })?;
 
     let activated = if is_first_profile {
         gh_provider.switch_user(&profile.github_username)?;
-        WindowsGitConfigProvider.write_profile_config(&profile.id)?;
+        gh_provider.ensure_required_scopes(&profile.github_username)?;
+        gh_provider.setup_git()?;
+        PlatformGitConfigProvider.write_profile_config(&profile.id)?;
         true
     } else {
         if required_login {
@@ -196,7 +194,7 @@ pub fn delete_profile(id: String) -> AppResult<()> {
 
 #[tauri::command]
 pub fn apply_profile_config(id: String) -> AppResult<ApplyConfigResult> {
-    WindowsGitConfigProvider.write_profile_config(&id)
+    PlatformGitConfigProvider.write_profile_config(&id)
 }
 
 #[tauri::command]
@@ -205,14 +203,16 @@ pub fn activate_profile(id: String) -> AppResult<()> {
         .into_iter()
         .find(|profile| profile.id == id)
         .ok_or_else(|| crate::error::AppError::NotFound("Perfil não encontrado.".into()))?;
-    WindowsGhProvider.switch_user(&profile.github_username)?;
-    WindowsGitConfigProvider.write_profile_config(&profile.id)?;
+    PlatformGhProvider.switch_user(&profile.github_username)?;
+    PlatformGhProvider.ensure_required_scopes(&profile.github_username)?;
+    PlatformGhProvider.setup_git()?;
+    PlatformGitConfigProvider.write_profile_config(&profile.id)?;
     Ok(())
 }
 
 #[tauri::command]
 pub fn get_gh_auth_status() -> AppResult<GhAuthStatus> {
-    let provider = WindowsGhProvider;
+    let provider = PlatformGhProvider;
     match provider.get_auth_status() {
         Ok(mut status) => {
             if status.active_user.is_none() {
@@ -231,8 +231,8 @@ pub fn get_gh_auth_status() -> AppResult<GhAuthStatus> {
 
 #[tauri::command]
 pub fn run_repo_diagnostic(path: String) -> AppResult<RepoDiagnostic> {
-    let git = WindowsGitProvider;
-    let gh = WindowsGhProvider;
+    let git = PlatformGitProvider;
+    let gh = PlatformGhProvider;
     let profiles = read_profiles()?;
     let is_repo = git.is_repo(&path);
     let effective_user = if is_repo {
@@ -305,7 +305,7 @@ pub fn run_repo_diagnostic(path: String) -> AppResult<RepoDiagnostic> {
 
 #[tauri::command]
 pub fn list_github_credentials() -> AppResult<Vec<CredentialEntry>> {
-    WindowsCredentialProvider.list_github_credentials()
+    PlatformCredentialProvider.list_github_credentials()
 }
 
 #[tauri::command]
@@ -324,7 +324,7 @@ pub fn open_path(path: String) -> AppResult<()> {
 
 #[tauri::command]
 pub fn reset_app_state() -> AppResult<ResetAppStateResult> {
-    reset_windows_app_state()
+    reset_platform_app_state()
 }
 
 fn dependency_info(result: AppResult<String>) -> DependencyInfo {

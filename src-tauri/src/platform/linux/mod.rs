@@ -1,7 +1,6 @@
 use std::{
     env, fs,
     io::{Read, Write},
-    os::windows::process::CommandExt,
     path::{Path, PathBuf},
     process::{Command, Stdio},
     sync::mpsc,
@@ -22,31 +21,27 @@ use crate::{
 
 const BEGIN_MARKER: &str = "# BEGIN Git Identity Manager";
 const END_MARKER: &str = "# END Git Identity Manager";
-const CREATE_NO_WINDOW: u32 = 0x08000000;
 const GITHUB_DEVICE_LOGIN_URL: &str = "https://github.com/login/device";
 const GH_LOGIN_OUTPUT_TIMEOUT: Duration = Duration::from_secs(30);
 const REQUIRED_GH_SCOPES: &[&str] = &["repo", "workflow"];
 const REQUIRED_GH_SCOPES_ARG: &str = "repo,workflow";
 
-pub struct WindowsGitProvider;
-pub struct WindowsGhProvider;
-pub struct WindowsCredentialProvider;
-pub struct WindowsGitConfigProvider;
+pub struct LinuxGitProvider;
+pub struct LinuxGhProvider;
+pub struct LinuxCredentialProvider;
+pub struct LinuxGitConfigProvider;
 
 pub fn app_config_dir() -> AppResult<PathBuf> {
-    let base = env::var("APPDATA")
-        .or_else(|_| env::var("XDG_CONFIG_HOME"))
-        .map_err(|_| {
-            AppError::NotFound("Diretório de configuração do usuário não encontrado.".into())
-        })?;
-    Ok(PathBuf::from(base).join("Git Identity Manager"))
+    let base = env::var("XDG_CONFIG_HOME")
+        .map(PathBuf::from)
+        .or_else(|_| home_dir().map(|home| home.join(".config")))?;
+    Ok(base.join("Git Identity Manager"))
 }
 
 pub fn home_dir() -> AppResult<PathBuf> {
-    env::var("USERPROFILE")
-        .or_else(|_| env::var("HOME"))
+    env::var("HOME")
         .map(PathBuf::from)
-        .map_err(|_| AppError::NotFound("Diretório home do usuário não encontrado.".into()))
+        .map_err(|_| AppError::NotFound("Diretorio home do usuario nao encontrado.".into()))
 }
 
 fn profiles_path() -> AppResult<PathBuf> {
@@ -64,7 +59,6 @@ fn now_string() -> String {
 fn run_command(program: &str, args: &[&str]) -> AppResult<CommandOutput> {
     let output = Command::new(program)
         .args(args)
-        .creation_flags(CREATE_NO_WINDOW)
         .output()
         .map_err(|error| AppError::Command(format!("Falha ao executar {program}: {error}")))?;
 
@@ -284,7 +278,7 @@ pub fn normalize_gitdir_pattern(path: &str) -> String {
 }
 
 fn normalize_path_for_compare(path: &str) -> String {
-    path.trim().replace('\\', "/").to_ascii_lowercase()
+    path.trim().replace('\\', "/")
 }
 
 fn global_gitconfig_path() -> AppResult<PathBuf> {
@@ -355,7 +349,7 @@ pub fn replace_managed_region(existing: &str, region: &str) -> String {
     }
 }
 
-impl WindowsGitProvider {
+impl LinuxGitProvider {
     fn git_value(&self, repo_path: &str, key: &str) -> AppResult<Option<String>> {
         let output = run_command("git", &["-C", repo_path, "config", key])?;
         if output.success && !output.stdout.is_empty() {
@@ -366,7 +360,7 @@ impl WindowsGitProvider {
     }
 }
 
-impl GitProvider for WindowsGitProvider {
+impl GitProvider for LinuxGitProvider {
     fn get_version(&self) -> AppResult<String> {
         command_version("git")
     }
@@ -408,7 +402,7 @@ impl GitProvider for WindowsGitProvider {
     }
 }
 
-impl WindowsGhProvider {
+impl LinuxGhProvider {
     pub fn start_login_web(&self) -> AppResult<GithubLoginStartResult> {
         let mut child = Command::new("gh")
             .args([
@@ -426,7 +420,6 @@ impl WindowsGhProvider {
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
-            .creation_flags(CREATE_NO_WINDOW)
             .spawn()
             .map_err(|error| {
                 AppError::Command(format!("Falha ao iniciar login do GitHub CLI: {error}"))
@@ -512,7 +505,7 @@ impl WindowsGhProvider {
     }
 }
 
-impl GhProvider for WindowsGhProvider {
+impl GhProvider for LinuxGhProvider {
     fn get_version(&self) -> AppResult<String> {
         command_version("gh")
     }
@@ -620,13 +613,18 @@ pub fn has_required_scopes(scopes: &[String]) -> bool {
     })
 }
 
-impl CredentialProvider for WindowsCredentialProvider {
+impl CredentialProvider for LinuxCredentialProvider {
     fn list_github_credentials(&self) -> AppResult<Vec<CredentialEntry>> {
-        let output = run_command("cmdkey", &["/list"])?;
-        if !output.success {
-            return Ok(Vec::new());
-        }
-        Ok(parse_cmdkey_github_credentials(&output.stdout))
+        let provider = LinuxGhProvider;
+        let status = provider.get_auth_status()?;
+        Ok(status
+            .accounts
+            .into_iter()
+            .map(|account| CredentialEntry {
+                target: format!("{}:{}", account.host, account.username),
+                kind: Some("GitHub CLI".into()),
+            })
+            .collect())
     }
 
     fn remove_credential(&self, _target: &str) -> AppResult<()> {
@@ -636,7 +634,7 @@ impl CredentialProvider for WindowsCredentialProvider {
     }
 }
 
-impl WindowsGitConfigProvider {
+impl LinuxGitConfigProvider {
     fn backup_global_config(&self) -> AppResult<Option<String>> {
         let global_path = global_gitconfig_path()?;
         if global_path.exists() {
@@ -650,7 +648,7 @@ impl WindowsGitConfigProvider {
     }
 }
 
-impl GitConfigProvider for WindowsGitConfigProvider {
+impl GitConfigProvider for LinuxGitConfigProvider {
     fn read_global_config(&self) -> AppResult<String> {
         Ok(fs::read_to_string(global_gitconfig_path()?).unwrap_or_default())
     }
@@ -798,7 +796,7 @@ pub fn parse_cmdkey_github_credentials(stdout: &str) -> Vec<CredentialEntry> {
             {
                 Some(CredentialEntry {
                     target: target.to_string(),
-                    kind: Some("Windows Credential Manager".into()),
+                    kind: Some("GitHub CLI".into()),
                 })
             } else {
                 None
@@ -821,31 +819,29 @@ pub fn open_path_with_system(path: &str) -> AppResult<()> {
             "Caminho não encontrado: {path}"
         )));
     }
-    let output = Command::new("cmd")
-        .args(["/C", "start", "", path])
-        .creation_flags(CREATE_NO_WINDOW)
+    let output = Command::new("xdg-open")
+        .arg(path)
         .output()
         .map_err(|error| AppError::Command(format!("Falha ao abrir caminho: {error}")))?;
     if output.status.success() {
         Ok(())
     } else {
         Err(AppError::Command(
-            "Não foi possível abrir o caminho no Windows.".into(),
+            "Não foi possível abrir o caminho no Linux.".into(),
         ))
     }
 }
 
 fn open_url_with_system(url: &str) -> AppResult<()> {
-    let output = Command::new("cmd")
-        .args(["/C", "start", "", url])
-        .creation_flags(CREATE_NO_WINDOW)
+    let output = Command::new("xdg-open")
+        .arg(url)
         .output()
         .map_err(|error| AppError::Command(format!("Falha ao abrir URL: {error}")))?;
     if output.status.success() {
         Ok(())
     } else {
         Err(AppError::Command(
-            "Não foi possível abrir a URL no Windows.".into(),
+            "Não foi possível abrir a URL no Linux.".into(),
         ))
     }
 }
@@ -856,7 +852,7 @@ pub fn reset_app_state() -> AppResult<ResetAppStateResult> {
     let mut cleared_git_config = false;
     let mut removed_profiles = false;
     let mut removed_managed_files = 0usize;
-    let gh_provider = WindowsGhProvider;
+    let gh_provider = LinuxGhProvider;
 
     match gh_provider.get_auth_status() {
         Ok(status) => {

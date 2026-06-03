@@ -55,6 +55,7 @@ export type GhAccount = {
   host: string;
   active: boolean;
   state?: string | null;
+  scopes: string[];
 };
 
 export type GhAuthStatus = {

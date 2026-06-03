@@ -80,6 +80,7 @@ pub struct GhAccount {
     pub host: String,
     pub active: bool,
     pub state: Option<String>,
+    pub scopes: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

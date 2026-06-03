@@ -16,6 +16,7 @@ pub trait GhProvider {
     fn get_auth_status(&self) -> AppResult<GhAuthStatus>;
     fn get_active_user(&self) -> AppResult<Option<String>>;
     fn switch_user(&self, username: &str) -> AppResult<()>;
+    fn ensure_required_scopes(&self, username: &str) -> AppResult<()>;
     fn setup_git(&self) -> AppResult<()>;
 }
 
