@@ -79,3 +79,7 @@ npm.cmd run build
 cd src-tauri
 cargo check
 ```
+
+## License
+
+This software is licensed for personal and non-commercial use only. See [LICENSE.md](LICENSE.md) for details.
