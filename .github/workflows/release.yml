@@ -56,7 +56,7 @@ jobs:
         with:
           releaseId: ${{ github.event.release.id }}
           tagName: ${{ github.event.release.tag_name }}
-          tauriScript: npm run tauri --
+          tauriScript: npm run tauri
           args: --config src-tauri/tauri.release.conf.json
           assetNamePattern: "[name]_[version]_[platform]_[arch][_setup][ext]"
           retryAttempts: 2
