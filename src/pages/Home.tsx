@@ -3,6 +3,7 @@ import { openUrl } from "@tauri-apps/plugin-opener";
 import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 import { FormEvent, useMemo, useRef, useState } from "react";
 import type { AppState } from "../App";
+import { useI18n } from "../i18n";
 import {
   activateProfile,
   finishProfileCreation,
@@ -22,12 +23,6 @@ type ProfileFeedback = {
   title: string;
   description: string;
 };
-
-const filters: Array<{ id: ProfileFilter; label: string }> = [
-  { id: "all", label: "Todos" },
-  { id: "active", label: "Ativos" },
-  { id: "recent", label: "Recentes" },
-];
 
 const emptyCreateDraft: CreateProfileWithAuthInput = {
   profileName: "",
@@ -76,6 +71,7 @@ function FeedbackBanner({
   description: string;
   onClose: () => void;
 }) {
+  const { t } = useI18n();
   const Icon = variant === "success" ? CheckCircle2 : TriangleAlert;
 
   return (
@@ -87,7 +83,7 @@ function FeedbackBanner({
         <strong>{title}</strong>
         <p>{description}</p>
       </div>
-      <button className="feedbackBannerClose" type="button" onClick={onClose} aria-label="Fechar mensagem">
+      <button className="feedbackBannerClose" type="button" onClick={onClose} aria-label={t("common.close")}>
         <X size={18} />
       </button>
     </div>
@@ -95,6 +91,7 @@ function FeedbackBanner({
 }
 
 function Home({ state }: Props) {
+  const { t } = useI18n();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<ProfileFilter>("all");
   const [activatingProfileId, setActivatingProfileId] = useState<string | null>(null);
@@ -111,6 +108,11 @@ function Home({ state }: Props) {
   const activeUser = state.auth?.activeUser ?? state.auth?.accounts.find((account) => account.active)?.username;
   const activeProfile = state.profiles.find((profile) => profile.githubUsername === activeUser);
   const activeDisplayName = activeProfile?.profileName ?? activeUser;
+  const filters: Array<{ id: ProfileFilter; label: string }> = [
+    { id: "all", label: t("home.filters.all") },
+    { id: "active", label: t("home.filters.active") },
+    { id: "recent", label: t("home.filters.recent") },
+  ];
 
   const visibleProfiles = useMemo(() => {
     const searched = state.profiles.filter((profile) => profileMatchesSearch(profile, search));
@@ -162,15 +164,15 @@ function Home({ state }: Props) {
     setProfileMessage(null);
     createCancelledRef.current = false;
     setCreatingProfile(true);
-    setCreateStatus("Verificando GitHub CLI, Git e contas autenticadas.");
+    setCreateStatus(t("home.checkingDependencies"));
 
     try {
-      setCreateStatus("Verificando contas autenticadas no GitHub CLI.");
+      setCreateStatus(t("home.checkingAccounts"));
       const preparation = await prepareProfileCreation(input);
       let previousActiveUser = preparation.activeUser ?? null;
 
       if (preparation.requiresLogin) {
-        setCreateStatus("Abrindo login no navegador. O GitHub CLI vai copiar o código para a área de transferência.");
+        setCreateStatus(t("home.openingLogin"));
         const login = await startProfileGithubLogin();
         setGithubLogin(login);
         setGithubCodeCopied(false);
@@ -180,7 +182,7 @@ function Home({ state }: Props) {
 
         while (!createCancelledRef.current) {
           if (Date.now() - startedAt > LOGIN_TIMEOUT_MS) {
-            throw new Error("Tempo esgotado aguardando o login do GitHub. Tente novamente.");
+            throw new Error(t("home.loginTimeout"));
           }
 
           await sleep(LOGIN_POLL_INTERVAL_MS);
@@ -197,15 +199,15 @@ function Home({ state }: Props) {
         }
       }
 
-      setCreateStatus("Configurando Git.");
+      setCreateStatus(t("home.configuringGit"));
       const result = await finishProfileCreation(input, previousActiveUser);
       if (createCancelledRef.current) {
         return;
       }
       setCreateStatus(result.message);
       setProfileMessage({
-        title: "Perfil criado e ativado",
-        description: "Git global atualizado.",
+        title: t("home.profileCreatedTitle"),
+        description: t("home.gitUpdated"),
       });
       await state.refresh();
       setCreateOpen(false);
@@ -213,7 +215,7 @@ function Home({ state }: Props) {
       setGithubLogin(null);
       setGithubCodeCopied(false);
     } catch (error) {
-      const message = error instanceof Error ? error.message : typeof error === "string" ? error : "Não foi possível criar o perfil.";
+      const message = error instanceof Error ? error.message : typeof error === "string" ? error : t("home.createFallbackError");
       setCreateError(message);
     } finally {
       setCreatingProfile(false);
@@ -229,12 +231,12 @@ function Home({ state }: Props) {
     try {
       await activateProfile(profileId);
       setProfileMessage({
-        title: "Perfil ativado",
-        description: "Git global atualizado.",
+        title: t("home.profileActivatedTitle"),
+        description: t("home.gitUpdated"),
       });
       await state.refresh();
     } catch {
-      setActivationError("Não foi possível ativar o perfil.");
+      setActivationError(t("home.activateFallbackError"));
     } finally {
       setActivatingProfileId(null);
     }
@@ -254,12 +256,12 @@ function Home({ state }: Props) {
   return (
     <div className="page homePage">
       <header className="homeHeader">
-        <h1>Identidades Git sem editar config na mão</h1>
-        <p>Gerencie e troque suas identidades do GitHub de forma rápida e segura.</p>
+        <h1>{t("home.title")}</h1>
+        <p>{t("home.subtitle")}</p>
       </header>
 
       <section className="homeSection">
-        <h2>Conta ativa</h2>
+        <h2>{t("home.activeAccount")}</h2>
         <article className="activeAccountCard">
           {activeUser ? (
             <>
@@ -272,13 +274,13 @@ function Home({ state }: Props) {
               </div>
               <span className="activeBadge">
                 <span aria-hidden="true" />
-                Ativa
+                {t("common.active")}
               </span>
             </>
           ) : (
             <div className="emptyActiveAccount">
-              <strong>Nenhuma conta ativa</strong>
-              <span>{state.auth?.error ?? "Faça login com gh auth login."}</span>
+              <strong>{t("home.noActiveAccount")}</strong>
+              <span>{state.auth?.error ?? t("home.ghLoginHint")}</span>
             </div>
           )}
         </article>
@@ -286,10 +288,10 @@ function Home({ state }: Props) {
 
       <section className="homeSection">
         <div className="homeSectionHeader">
-          <h2>Perfis</h2>
+          <h2>{t("home.profiles")}</h2>
           <button className="primaryAction addProfileButton" type="button" onClick={openCreateProfile}>
             <Plus size={18} />
-            Adicionar perfil
+            {t("home.addProfile")}
           </button>
         </div>
 
@@ -304,7 +306,7 @@ function Home({ state }: Props) {
         {activationError && (
           <FeedbackBanner
             variant="error"
-            title="Não foi possível concluir"
+            title={t("common.errorTitle")}
             description={activationError}
             onClose={() => setActivationError(null)}
           />
@@ -315,14 +317,14 @@ function Home({ state }: Props) {
             <label className="searchField">
               <Search size={18} />
               <input
-                aria-label="Buscar perfil"
-                placeholder="Buscar perfil"
+                aria-label={t("home.searchProfile")}
+                placeholder={t("home.searchProfile")}
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
               />
             </label>
 
-            <div className="filterTabs" aria-label="Filtrar perfis">
+            <div className="filterTabs" aria-label={t("home.filterProfiles")}>
               {filters.map((item) => (
                 <button
                   key={item.id}
@@ -336,12 +338,12 @@ function Home({ state }: Props) {
             </div>
           </div>
 
-          <div className="profileTable" role="table" aria-label="Perfis GitHub">
+          <div className="profileTable" role="table" aria-label={t("home.githubProfiles")}>
             <div className="profileTableHeader" role="row">
-              <span role="columnheader">Perfil</span>
-              <span role="columnheader">Usuário</span>
-              <span role="columnheader">Status</span>
-              <span role="columnheader" aria-label="Ação" />
+              <span role="columnheader">{t("home.columnProfile")}</span>
+              <span role="columnheader">{t("home.columnUser")}</span>
+              <span role="columnheader">{t("common.status")}</span>
+              <span role="columnheader" aria-label={t("home.columnAction")} />
             </div>
 
             <div className="profileTableBody">
@@ -359,7 +361,7 @@ function Home({ state }: Props) {
                       {profile.githubUsername}
                     </span>
                     <span className="homeProfileCell" role="cell">
-                      {isActive ? <span className="tableStatusBadge">Ativa</span> : <span className="inactiveBadge">Inativa</span>}
+                      {isActive ? <span className="tableStatusBadge">{t("common.active")}</span> : <span className="inactiveBadge">{t("common.inactive")}</span>}
                     </span>
                     <span className="homeProfileCell actionCell" role="cell">
                       <button
@@ -370,7 +372,7 @@ function Home({ state }: Props) {
                         aria-busy={isActivating}
                       >
                         {isActivating && <span className="buttonSpinner" aria-hidden="true" />}
-                        {isActive ? "Ativo" : isActivating ? "Ativando" : "Ativar"}
+                        {isActive ? t("common.active") : isActivating ? t("common.activating") : t("common.activate")}
                       </button>
                     </span>
                   </div>
@@ -379,7 +381,7 @@ function Home({ state }: Props) {
 
               {visibleProfiles.length === 0 && (
                 <div className="emptyProfileTable">
-                  {state.profiles.length === 0 ? "Nenhum perfil criado ainda." : "Nenhum perfil encontrado."}
+                  {state.profiles.length === 0 ? t("home.emptyProfiles") : t("home.emptySearch")}
                 </div>
               )}
             </div>
@@ -392,47 +394,47 @@ function Home({ state }: Props) {
           <section className="modalPanel" role="dialog" aria-modal="true" aria-labelledby="create-profile-title">
             <div className="modalHeader">
               <div>
-                <h2 id="create-profile-title">Adicionar perfil</h2>
-                <p>Informe a identidade Git e a conta GitHub usada neste perfil.</p>
+                <h2 id="create-profile-title">{t("home.createTitle")}</h2>
+                <p>{t("home.createDescription")}</p>
               </div>
-              <button className="iconButton" type="button" onClick={closeCreateProfile} title="Fechar">
+              <button className="iconButton" type="button" onClick={closeCreateProfile} title={t("common.close")}>
                 <X size={18} />
               </button>
             </div>
 
             <form className="form profileForm" onSubmit={submitCreateProfile}>
               <label>
-                Nome do perfil
+                {t("home.profileName")}
                 <span className="inputShell">
                   <input
                     value={createDraft.profileName}
                     onChange={(event) => setCreateDraft({ ...createDraft, profileName: event.target.value })}
-                    placeholder="Nome do perfil"
+                    placeholder={t("home.profileName")}
                     disabled={creatingProfile}
                     required
                   />
                 </span>
               </label>
               <label>
-                Usuário do GitHub
+                {t("home.githubUsername")}
                 <span className="inputShell">
                   <input
                     value={createDraft.githubUsername}
                     onChange={(event) => setCreateDraft({ ...createDraft, githubUsername: event.target.value })}
-                    placeholder="usuario-github"
+                    placeholder="github-user"
                     disabled={creatingProfile}
                     required
                   />
                 </span>
               </label>
               <label>
-                Email do Git
+                {t("home.gitEmail")}
                 <span className="inputShell">
                   <input
                     type="email"
                     value={createDraft.gitUserEmail}
                     onChange={(event) => setCreateDraft({ ...createDraft, gitUserEmail: event.target.value })}
-                    placeholder="email@exemplo.com"
+                    placeholder="email@example.com"
                     disabled={creatingProfile}
                     required
                   />
@@ -442,21 +444,21 @@ function Home({ state }: Props) {
               {(createStatus || creatingProfile) && (
                 <div className={creatingProfile ? "noticeBox withSpinner" : "noticeBox"}>
                   {creatingProfile && <span className="buttonSpinner" aria-hidden="true" />}
-                  <p>{createStatus ?? "Criando perfil."}</p>
+                  <p>{createStatus ?? t("home.creatingProfile")}</p>
                 </div>
               )}
               {githubLogin && (
                 <div className="githubLoginBox">
                   <div className="githubLoginCode">
-                    <span>Código GitHub</span>
+                    <span>{t("home.githubCode")}</span>
                     <strong>{githubLogin.userCode}</strong>
                   </div>
                   <div className="githubLoginActions">
                     <button className="secondaryAction" type="button" onClick={openGithubLoginUrl}>
-                      Abrir GitHub
+                      {t("home.openGithub")}
                     </button>
                     <button className="secondaryAction" type="button" onClick={copyGithubLoginCode}>
-                      {githubCodeCopied ? "Copiado" : "Copiar código"}
+                      {githubCodeCopied ? t("common.copied") : t("common.copyCode")}
                     </button>
                   </div>
                 </div>
@@ -464,7 +466,7 @@ function Home({ state }: Props) {
               {createError && (
                 <FeedbackBanner
                   variant="error"
-                  title="Não foi possível concluir"
+                  title={t("common.errorTitle")}
                   description={createError}
                   onClose={() => setCreateError(null)}
                 />
@@ -473,10 +475,10 @@ function Home({ state }: Props) {
               <div className="editorActions">
                 <button className="primaryAction" type="submit" disabled={creatingProfile}>
                   {creatingProfile && <span className="buttonSpinner" aria-hidden="true" />}
-                  {creatingProfile ? "Processando" : "Adicionar perfil"}
+                  {creatingProfile ? t("common.processing") : t("home.addProfile")}
                 </button>
                 <button className="secondaryAction" type="button" onClick={closeCreateProfile}>
-                  Cancelar
+                  {t("common.cancel")}
                 </button>
               </div>
             </form>

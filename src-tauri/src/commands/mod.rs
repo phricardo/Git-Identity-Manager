@@ -5,6 +5,7 @@ use crate::{
         CredentialEntry, DependencyInfo, DependencyStatus, GhAuthStatus, GithubLoginStartResult,
         PrepareProfileCreationResult, Profile, ProfileInput, RepoDiagnostic, ResetAppStateResult,
     },
+    localization::tr,
     platform::{
         delete_profile_by_id, global_gitconfig_path_for_command, home_dir, open_path_with_system,
         read_profiles, reset_app_state as reset_platform_app_state, save_profile_input,
@@ -61,9 +62,9 @@ pub fn prepare_profile_creation(
         is_first_profile,
         active_user,
         message: if requires_login {
-            "Login do GitHub necessário.".into()
+            tr("github_login_required").into()
         } else {
-            "Conta GitHub já autenticada.".into()
+            tr("github_account_authenticated").into()
         },
     })
 }
@@ -88,7 +89,9 @@ pub fn finish_profile_creation(
 
     if !has_github_account(&status, &requested_user) {
         return Err(crate::error::AppError::Validation(format!(
-            "Login não confirmado para {requested_user}. Confirme no navegador ou entre na conta correta."
+            "{} {requested_user}. {}",
+            tr("github_login_not_confirmed_prefix"),
+            tr("github_login_not_confirmed_suffix")
         )));
     }
 
@@ -113,7 +116,7 @@ pub fn finish_profile_creation(
     });
 
     Ok(CreateProfileWithAuthResult {
-        message: "Perfil criado e ativado. Git global atualizado.".into(),
+        message: tr("profile_created_activated_git_updated").into(),
         profile,
         activated: true,
         required_login,
@@ -144,8 +147,7 @@ pub fn create_profile_with_auth(
 
     if !has_github_account(&initial_status, &requested_user) {
         return Err(crate::error::AppError::Validation(
-            "Esta ação agora usa login assistido pela interface. Use o fluxo Adicionar perfil."
-                .into(),
+            tr("assisted_login_required").into(),
         ));
     }
 
@@ -177,9 +179,9 @@ pub fn create_profile_with_auth(
 
     Ok(CreateProfileWithAuthResult {
         message: if activated {
-            "Perfil criado e ativado.".into()
+            tr("profile_created_activated").into()
         } else {
-            "Perfil criado.".into()
+            tr("profile_created").into()
         },
         profile,
         activated,
@@ -202,7 +204,7 @@ pub fn activate_profile(id: String) -> AppResult<()> {
     let profile = read_profiles()?
         .into_iter()
         .find(|profile| profile.id == id)
-        .ok_or_else(|| crate::error::AppError::NotFound("Perfil não encontrado.".into()))?;
+        .ok_or_else(|| crate::error::AppError::NotFound(tr("profile_not_found").into()))?;
     PlatformGhProvider.switch_user(&profile.github_username)?;
     PlatformGhProvider.ensure_required_scopes(&profile.github_username)?;
     PlatformGhProvider.setup_git()?;
@@ -265,29 +267,32 @@ pub fn run_repo_diagnostic(path: String) -> AppResult<RepoDiagnostic> {
     let mut warnings = Vec::new();
 
     if !is_repo {
-        warnings.push("A pasta selecionada não é um repositório Git.".into());
+        warnings.push(tr("selected_folder_not_repo").into());
     }
     if let Some(profile) = &matched_profile {
         if effective_user.name.as_deref() != Some(profile.git_user_name.as_str()) {
             warnings.push(format!(
-                "O user.name efetivo nao corresponde ao perfil {}.",
+                "{} {}.",
+                tr("user_name_mismatch"),
                 profile.profile_name
             ));
         }
         if effective_user.email.as_deref() != Some(profile.git_user_email.as_str()) {
             warnings.push(format!(
-                "O user.email efetivo não corresponde ao perfil {}.",
+                "{} {}.",
+                tr("user_email_mismatch"),
                 profile.profile_name
             ));
         }
         if active_gh_user.as_deref() != Some(profile.github_username.as_str()) {
             warnings.push(format!(
-                "A conta ativa no GitHub CLI não corresponde ao perfil {}.",
+                "{} {}.",
+                tr("active_account_mismatch"),
                 profile.profile_name
             ));
         }
     } else if is_repo {
-        warnings.push("Nenhum perfil corresponde a conta ativa do GitHub CLI.".into());
+        warnings.push(tr("no_profile_matches_active_account").into());
     }
 
     Ok(RepoDiagnostic {
@@ -351,17 +356,17 @@ fn has_github_account(status: &GhAuthStatus, username: &str) -> bool {
 fn validate_create_profile_input(input: &CreateProfileWithAuthInput) -> AppResult<()> {
     if input.profile_name.trim().is_empty() {
         return Err(crate::error::AppError::Validation(
-            "Informe o nome do perfil.".into(),
+            tr("profile_name_required").into(),
         ));
     }
     if input.github_username.trim().is_empty() {
         return Err(crate::error::AppError::Validation(
-            "Informe o usuário do GitHub.".into(),
+            tr("github_username_required").into(),
         ));
     }
     if input.git_user_email.trim().is_empty() || !input.git_user_email.contains('@') {
         return Err(crate::error::AppError::Validation(
-            "Informe um email do Git válido.".into(),
+            tr("git_email_required").into(),
         ));
     }
     Ok(())

@@ -1,6 +1,7 @@
 import { CheckCircle2, Info, Lock, Plus, Search, Trash2, UserCheck, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import type { AppState } from "../App";
+import { useI18n } from "../i18n";
 import { activateProfile, deleteProfile, saveProfile } from "../lib/api";
 import type { Profile, ProfileInput } from "../types";
 
@@ -24,10 +25,11 @@ function matchesSearch(profile: Profile, search: string) {
 }
 
 function Profiles({ state }: { state: AppState }) {
+  const { t } = useI18n();
   const activeUser = state.auth?.activeUser ?? state.auth?.accounts.find((account) => account.active)?.username;
   const [selectedId, setSelectedId] = useState<string | null>(state.profiles[0]?.id ?? null);
   const [draft, setDraft] = useState<ProfileInput>(state.profiles[0] ?? emptyProfile);
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ text: string; variant: "success" | "error" } | null>(null);
   const [search, setSearch] = useState("");
   const [activatingProfileId, setActivatingProfileId] = useState<string | null>(null);
 
@@ -88,7 +90,7 @@ function Profiles({ state }: { state: AppState }) {
     });
     setSelectedId(saved.id);
     setDraft(saved);
-    setMessage(isCreating ? "Perfil criado." : "Perfil salvo.");
+    setMessage({ text: isCreating ? t("profiles.profileCreated") : t("profiles.profileSaved"), variant: "success" });
     await state.refresh();
   }
 
@@ -99,10 +101,10 @@ function Profiles({ state }: { state: AppState }) {
     setActivatingProfileId(id);
     try {
       await activateProfile(id);
-      setMessage("Conta ativada e Git global atualizado.");
+      setMessage({ text: t("profiles.accountActivated"), variant: "success" });
       await state.refresh();
     } catch {
-      setMessage("Não foi possível ativar o perfil.");
+      setMessage({ text: t("home.activateFallbackError"), variant: "error" });
     } finally {
       setActivatingProfileId(null);
     }
@@ -116,7 +118,7 @@ function Profiles({ state }: { state: AppState }) {
     const nextSelected = remainingProfiles[0];
     setSelectedId(nextSelected?.id ?? null);
     setDraft(nextSelected ?? emptyProfile);
-    setMessage("Perfil removido.");
+    setMessage({ text: t("profiles.profileRemoved"), variant: "success" });
     await state.refresh();
   }
 
@@ -125,10 +127,10 @@ function Profiles({ state }: { state: AppState }) {
       <section className="panel profilesPanel">
         <div className="sectionHeader">
           <div>
-            <h1>Perfis</h1>
-            <p>Gerencie identidades locais para alternar entre contas.</p>
+            <h1>{t("profiles.title")}</h1>
+            <p>{t("profiles.subtitle")}</p>
           </div>
-          <button className="iconButton" type="button" onClick={newProfile} title="Novo perfil">
+          <button className="iconButton" type="button" onClick={newProfile} title={t("profiles.newProfile")}>
             <Plus size={18} />
           </button>
         </div>
@@ -136,8 +138,8 @@ function Profiles({ state }: { state: AppState }) {
         <label className="searchField compactSearch">
           <Search size={18} />
           <input
-            aria-label="Buscar perfil"
-            placeholder="Buscar perfil"
+            aria-label={t("home.searchProfile")}
+            placeholder={t("home.searchProfile")}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
@@ -163,13 +165,13 @@ function Profiles({ state }: { state: AppState }) {
                   {isSelected && (
                     <span className="profileMetaBadge">
                       <CheckCircle2 size={14} />
-                      Selecionado
+                      {t("profiles.selected")}
                     </span>
                   )}
                   {isActive ? (
                     <span className="profileMetaBadge active">
                       <span aria-hidden="true" />
-                      Perfil ativo
+                      {t("profiles.activeProfile")}
                     </span>
                   ) : (
                     <button
@@ -182,12 +184,12 @@ function Profiles({ state }: { state: AppState }) {
                       {isActivating ? (
                         <>
                           <span className="buttonSpinner" aria-hidden="true" />
-                          Ativando
+                          {t("common.activating")}
                         </>
                       ) : (
                         <>
                           <UserCheck size={15} />
-                          Ativar
+                          {t("common.activate")}
                         </>
                       )}
                     </button>
@@ -199,7 +201,7 @@ function Profiles({ state }: { state: AppState }) {
 
           {filteredProfiles.length === 0 && (
             <p className="emptyState">
-              {state.profiles.length === 0 ? "Nenhum perfil criado ainda." : "Nenhum perfil encontrado."}
+              {state.profiles.length === 0 ? t("home.emptyProfiles") : t("home.emptySearch")}
             </p>
           )}
         </div>
@@ -208,25 +210,21 @@ function Profiles({ state }: { state: AppState }) {
       <section className="panel profileEditorPanel">
         <div className="sectionHeader">
           <div>
-            <h1>{isCreating ? "Criar perfil" : "Editar perfil"}</h1>
-            <p>
-              {isCreating
-                ? "Adicione uma identidade local para alternar entre contas."
-                : "Revise os dados usados na identidade Git local."}
-            </p>
+            <h1>{isCreating ? t("profiles.createProfile") : t("profiles.editProfile")}</h1>
+            <p>{isCreating ? t("profiles.createSubtitle") : t("profiles.editSubtitle")}</p>
           </div>
         </div>
 
         {formLocked && (
           <div className="noticeBox">
             <Info size={18} />
-            <p>Perfis ativos não podem ser editados. Remova este perfil e crie outro com os dados corretos.</p>
+            <p>{t("profiles.lockedNotice")}</p>
           </div>
         )}
 
         <form className="form profileForm" onSubmit={submit}>
           <label>
-            Nome do perfil
+            {t("home.profileName")}
             <span className="inputShell">
               <input
                 value={draft.profileName}
@@ -263,23 +261,23 @@ function Profiles({ state }: { state: AppState }) {
             </span>
           </label>
 
-          {message && <p className={message.startsWith("Não") ? "errorText" : "success"}>{message}</p>}
+          {message && <p className={message.variant === "error" ? "errorText" : "success"}>{message.text}</p>}
 
           <div className="editorActions">
             <button className="primaryAction" type="submit" disabled={formLocked}>
               {formLocked && <Lock size={16} />}
-              {isCreating ? "Criar perfil" : "Salvar alterações"}
+              {isCreating ? t("profiles.createProfile") : t("profiles.saveChanges")}
             </button>
 
             {isCreating ? (
               <button className="secondaryAction" type="button" onClick={cancelCreate}>
                 <X size={16} />
-                Cancelar
+                {t("common.cancel")}
               </button>
             ) : (
               <button className="dangerAction" type="button" onClick={remove} disabled={!selectedId}>
                 <Trash2 size={16} />
-                Remover perfil
+                {t("profiles.removeProfile")}
               </button>
             )}
           </div>

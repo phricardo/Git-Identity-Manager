@@ -1,5 +1,6 @@
 mod commands;
 mod error;
+mod localization;
 mod models;
 mod platform;
 mod providers;
@@ -26,6 +27,8 @@ pub fn run() {
             commands::open_global_gitconfig,
             commands::open_path,
             commands::reset_app_state,
+            localization::get_app_settings,
+            localization::set_language_preference,
         ])
         .run(tauri::generate_context!())
         .expect("failed to run Git Identity Manager");

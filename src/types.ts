@@ -101,3 +101,12 @@ export type ResetAppStateResult = {
   removedManagedFiles: number;
   warnings: string[];
 };
+
+export type Language = "en" | "pt-BR";
+
+export type LanguagePreference = "system" | "en" | "pt-BR";
+
+export type AppSettings = {
+  languagePreference: LanguagePreference;
+  resolvedLanguage: Language;
+};

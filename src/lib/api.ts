@@ -12,6 +12,8 @@ import type {
   ProfileInput,
   RepoDiagnostic,
   ResetAppStateResult,
+  AppSettings,
+  LanguagePreference,
 } from "../types";
 
 export function checkDependencies() {
@@ -79,4 +81,12 @@ export function openPath(path: string) {
 
 export function resetAppState() {
   return invoke<ResetAppStateResult>("reset_app_state");
+}
+
+export function getAppSettings(detectedLocale: string) {
+  return invoke<AppSettings>("get_app_settings", { detectedLocale });
+}
+
+export function setLanguagePreference(preference: LanguagePreference, detectedLocale: string) {
+  return invoke<AppSettings>("set_language_preference", { preference, detectedLocale });
 }

@@ -489,14 +489,20 @@ h2 {
 }
 
 .searchField input,
-.inputShell input {
+.inputShell input,
+.inputShell select {
   min-width: 0;
   min-height: 40px;
+  width: 100%;
   padding: 0;
   border: 0;
   color: var(--text);
   background: transparent;
   outline: none;
+}
+
+.inputShell select {
+  cursor: pointer;
 }
 
 .searchField input::placeholder,

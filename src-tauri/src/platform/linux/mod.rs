@@ -12,6 +12,7 @@ use serde_json::Value;
 
 use crate::{
     error::{AppError, AppResult},
+    localization::tr,
     models::{
         ApplyConfigResult, CommandOutput, ConfigOrigin, CredentialEntry, EffectiveUser, GhAccount,
         GhAuthStatus, GithubLoginStartResult, Profile, ProfileInput, ResetAppStateResult,
@@ -41,7 +42,7 @@ pub fn app_config_dir() -> AppResult<PathBuf> {
 pub fn home_dir() -> AppResult<PathBuf> {
     env::var("HOME")
         .map(PathBuf::from)
-        .map_err(|_| AppError::NotFound("Diretorio home do usuario nao encontrado.".into()))
+        .map_err(|_| AppError::NotFound(tr("home_dir_not_found").into()))
 }
 
 fn profiles_path() -> AppResult<PathBuf> {
@@ -60,7 +61,7 @@ fn run_command(program: &str, args: &[&str]) -> AppResult<CommandOutput> {
     let output = Command::new(program)
         .args(args)
         .output()
-        .map_err(|error| AppError::Command(format!("Falha ao executar {program}: {error}")))?;
+        .map_err(|error| AppError::Command(format!("{} {program}: {error}", tr("command_failed"))))?;
 
     Ok(CommandOutput {
         success: output.status.success(),
@@ -79,7 +80,7 @@ fn command_version(program: &str) -> AppResult<String> {
         Ok(first_line(&output.stdout))
     } else {
         Err(AppError::Command(if output.stderr.is_empty() {
-            format!("{program} não retornou versão.")
+            format!("{program} {}", tr("program_no_version"))
         } else {
             output.stderr
         }))
@@ -110,7 +111,7 @@ pub fn parse_github_login_output(output: &str) -> Option<GithubLoginStartResult>
     Some(GithubLoginStartResult {
         verification_uri,
         user_code,
-        message: "Digite o código no GitHub para confirmar este login.".into(),
+        message: tr("github_login_message").into(),
     })
 }
 
@@ -223,7 +224,7 @@ pub fn delete_profile_by_id(id: &str) -> AppResult<()> {
     let initial_len = profiles.len();
     profiles.retain(|profile| profile.id != id);
     if profiles.len() == initial_len {
-        return Err(AppError::NotFound("Perfil não encontrado.".into()));
+        return Err(AppError::NotFound(tr("profile_not_found").into()));
     }
     write_profiles(&profiles)?;
     Ok(())
@@ -231,20 +232,20 @@ pub fn delete_profile_by_id(id: &str) -> AppResult<()> {
 
 fn validate_profile(input: &ProfileInput) -> AppResult<()> {
     if input.profile_name.trim().is_empty() {
-        return Err(AppError::Validation("Informe o nome do perfil.".into()));
+        return Err(AppError::Validation(tr("profile_name_required").into()));
     }
     if input.github_username.trim().is_empty() {
-        return Err(AppError::Validation("Informe o GitHub username.".into()));
+        return Err(AppError::Validation(tr("github_username_required").into()));
     }
     if input.git_user_name.trim().is_empty() {
-        return Err(AppError::Validation("Informe o user.name.".into()));
+        return Err(AppError::Validation(tr("git_user_name_required").into()));
     }
     if input.git_user_email.trim().is_empty() || !input.git_user_email.contains('@') {
-        return Err(AppError::Validation("Informe um user.email válido.".into()));
+        return Err(AppError::Validation(tr("git_email_required").into()));
     }
     if !input.base_path.trim().is_empty() && !Path::new(input.base_path.trim()).is_absolute() {
         return Err(AppError::Validation(
-            "A pasta base precisa ser um caminho absoluto.".into(),
+            tr("base_path_absolute").into(),
         ));
     }
     Ok(())
@@ -254,7 +255,7 @@ fn find_profile(id: &str) -> AppResult<Profile> {
     read_profiles()?
         .into_iter()
         .find(|profile| profile.id == id)
-        .ok_or_else(|| AppError::NotFound("Perfil não encontrado.".into()))
+        .ok_or_else(|| AppError::NotFound(tr("profile_not_found").into()))
 }
 
 pub fn slugify(value: &str) -> String {
@@ -422,7 +423,7 @@ impl LinuxGhProvider {
             .stderr(Stdio::piped())
             .spawn()
             .map_err(|error| {
-                AppError::Command(format!("Falha ao iniciar login do GitHub CLI: {error}"))
+                AppError::Command(format!("{} {error}", tr("start_github_login_failed")))
             })?;
 
         let mut stdin = child.stdin.take();
@@ -448,7 +449,7 @@ impl LinuxGhProvider {
                 let _ = child.kill();
                 let _ = child.wait();
                 return Err(AppError::Command(
-                    "Não foi possível obter o código de login do GitHub CLI.".into(),
+                    tr("github_login_code_failed").into(),
                 ));
             }
 
@@ -462,13 +463,14 @@ impl LinuxGhProvider {
                 Err(mpsc::RecvTimeoutError::Timeout) => {
                     if let Some(status) = child.try_wait()? {
                         return Err(AppError::Command(format!(
-                            "GitHub CLI encerrou antes de gerar o código de login. Status: {status}."
+                            "{} {status}.",
+                            tr("github_cli_closed_before_code")
                         )));
                     }
                 }
                 Err(mpsc::RecvTimeoutError::Disconnected) => {
                     return Err(AppError::Command(
-                        "GitHub CLI encerrou sem gerar o código de login.".into(),
+                        tr("github_cli_closed_without_code").into(),
                     ));
                 }
             }
@@ -497,7 +499,7 @@ impl LinuxGhProvider {
             Ok(())
         } else {
             Err(AppError::Command(if output.stderr.is_empty() {
-                format!("Não foi possível sair da conta {username} em {host}.")
+                format!("{} {username} {} {host}.", tr("logout_failed_prefix"), tr("logout_failed_middle"))
             } else {
                 output.stderr
             }))
@@ -514,7 +516,7 @@ impl GhProvider for LinuxGhProvider {
         let output = run_command("gh", &["auth", "status", "--json", "hosts"])?;
         if !output.success && output.stdout.is_empty() {
             return Err(AppError::Command(if output.stderr.is_empty() {
-                "Não foi possível consultar gh auth status.".into()
+                tr("gh_auth_status_failed").into()
             } else {
                 output.stderr
             }));
@@ -547,7 +549,7 @@ impl GhProvider for LinuxGhProvider {
             Ok(())
         } else {
             Err(AppError::Command(if output.stderr.is_empty() {
-                format!("Não foi possível ativar a conta {username}.")
+                format!("{} {username}.", tr("activate_account_failed_prefix"))
             } else {
                 output.stderr
             }))
@@ -561,7 +563,9 @@ impl GhProvider for LinuxGhProvider {
             account.host == "github.com" && account.username.eq_ignore_ascii_case(username)
         }) else {
             return Err(AppError::Validation(format!(
-                "Conta GitHub {username} não encontrada no GitHub CLI."
+                "{} {username} {}",
+                tr("account_not_found_prefix"),
+                tr("account_not_found_suffix")
             )));
         };
 
@@ -587,7 +591,9 @@ impl GhProvider for LinuxGhProvider {
         } else {
             Err(AppError::Command(if output.stderr.is_empty() {
                 format!(
-                    "Não foi possível atualizar permissões da conta {username}. Autorize os escopos repo e workflow."
+                    "{} {username}. {}",
+                    tr("refresh_scopes_failed_prefix"),
+                    tr("refresh_scopes_failed_suffix")
                 )
             } else {
                 output.stderr
@@ -629,7 +635,7 @@ impl CredentialProvider for LinuxCredentialProvider {
 
     fn remove_credential(&self, _target: &str) -> AppResult<()> {
         Err(AppError::Validation(
-            "Remoção de credenciais fica para a V1.1.".into(),
+            tr("credential_removal_v11").into(),
         ))
     }
 }
@@ -816,18 +822,19 @@ pub fn match_profile_for_path(path: &str, profiles: &[Profile]) -> Option<Profil
 pub fn open_path_with_system(path: &str) -> AppResult<()> {
     if !Path::new(path).exists() {
         return Err(AppError::NotFound(format!(
-            "Caminho não encontrado: {path}"
+            "{} {path}",
+            tr("path_not_found")
         )));
     }
     let output = Command::new("xdg-open")
         .arg(path)
         .output()
-        .map_err(|error| AppError::Command(format!("Falha ao abrir caminho: {error}")))?;
+        .map_err(|error| AppError::Command(format!("{} {error}", tr("open_path_failed"))))?;
     if output.status.success() {
         Ok(())
     } else {
         Err(AppError::Command(
-            "Não foi possível abrir o caminho no Linux.".into(),
+            tr("system_open_path_failed_linux").into(),
         ))
     }
 }
@@ -836,12 +843,12 @@ fn open_url_with_system(url: &str) -> AppResult<()> {
     let output = Command::new("xdg-open")
         .arg(url)
         .output()
-        .map_err(|error| AppError::Command(format!("Falha ao abrir URL: {error}")))?;
+        .map_err(|error| AppError::Command(format!("{} {error}", tr("open_url_failed"))))?;
     if output.status.success() {
         Ok(())
     } else {
         Err(AppError::Command(
-            "Não foi possível abrir a URL no Linux.".into(),
+            tr("system_open_url_failed_linux").into(),
         ))
     }
 }
@@ -864,7 +871,8 @@ pub fn reset_app_state() -> AppResult<ResetAppStateResult> {
             }
         }
         Err(error) => warnings.push(format!(
-            "GitHub CLI não tinha contas para remover ou não respondeu: {error}"
+            "{} {error}",
+            tr("gh_no_accounts_warning")
         )),
     }
 
@@ -880,7 +888,7 @@ pub fn reset_app_state() -> AppResult<ResetAppStateResult> {
     match profiles_path() {
         Ok(path) if path.exists() => match fs::remove_file(&path) {
             Ok(()) => removed_profiles = true,
-            Err(error) => warnings.push(format!("Não foi possível remover perfis locais: {error}")),
+            Err(error) => warnings.push(format!("{} {error}", tr("remove_profiles_failed"))),
         },
         Ok(_) => removed_profiles = true,
         Err(error) => warnings.push(error.to_string()),
@@ -910,7 +918,7 @@ fn unset_global_git_value(key: &str) -> AppResult<()> {
         Ok(())
     } else {
         Err(AppError::Command(if output.stderr.is_empty() {
-            format!("Não foi possível limpar {key} do Git global.")
+            format!("{} {key}.", tr("clear_git_value_failed"))
         } else {
             output.stderr
         }))

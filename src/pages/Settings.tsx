@@ -1,16 +1,24 @@
-import { AlertTriangle, RotateCcw, X } from "lucide-react";
-import { useState } from "react";
+import { AlertTriangle, Languages, RotateCcw, X } from "lucide-react";
+import { ChangeEvent, useState } from "react";
 import type { AppState } from "../App";
+import { useI18n } from "../i18n";
 import { resetAppState } from "../lib/api";
-import type { ResetAppStateResult } from "../types";
+import type { LanguagePreference, ResetAppStateResult } from "../types";
+
+const resetConfirmation = "RESET";
 
 function Settings({ state }: { state: AppState }) {
+  const { t } = useI18n();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmation, setConfirmation] = useState("");
   const [resetting, setResetting] = useState(false);
   const [result, setResult] = useState<ResetAppStateResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const canReset = confirmation === "RESETAR" && !resetting;
+  const canReset = confirmation === resetConfirmation && !resetting;
+
+  async function changeLanguage(event: ChangeEvent<HTMLSelectElement>) {
+    await state.setLanguagePreference(event.target.value as LanguagePreference);
+  }
 
   async function runReset() {
     if (!canReset) return;
@@ -24,7 +32,7 @@ function Settings({ state }: { state: AppState }) {
       setConfirmation("");
       await state.refresh();
     } catch (resetError) {
-      setError(typeof resetError === "string" ? resetError : "Não foi possível resetar o aplicativo.");
+      setError(typeof resetError === "string" ? resetError : t("settings.resetFallbackError"));
     } finally {
       setResetting(false);
     }
@@ -41,45 +49,66 @@ function Settings({ state }: { state: AppState }) {
     <div className="page settingsPage">
       <header className="pageHeader">
         <div>
-          <p className="eyebrow">Configurações</p>
-          <h1>Resetar aplicativo</h1>
-          <p>Remova contas locais, configurações globais do Git e perfis salvos pelo app.</p>
+          <p className="eyebrow">{t("settings.eyebrow")}</p>
+          <h1>{t("settings.title")}</h1>
+          <p>{t("settings.subtitle")}</p>
         </div>
       </header>
 
       <section className="panel resetPanel">
         <div className="resetPanelCopy">
+          <Languages size={20} />
+          <div>
+            <h2>{t("settings.languageTitle")}</h2>
+            <p>{t("settings.languageDescription")}</p>
+          </div>
+        </div>
+
+        <label className="confirmField">
+          {t("settings.languageTitle")}
+          <span className="inputShell">
+            <select value={state.settings.languagePreference} onChange={changeLanguage}>
+              <option value="system">{t("settings.languageSystem")}</option>
+              <option value="en">{t("settings.languageEnglish")}</option>
+              <option value="pt-BR">{t("settings.languagePortuguese")}</option>
+            </select>
+          </span>
+        </label>
+      </section>
+
+      <section className="panel resetPanel">
+        <div className="resetPanelCopy">
           <AlertTriangle size={20} />
           <div>
-            <h2>Reset total</h2>
-            <p>Esta ação remove autenticações locais do GitHub CLI, limpa user.name/user.email globais e apaga os perfis salvos no Git Identity Manager.</p>
+            <h2>{t("settings.resetTotal")}</h2>
+            <p>{t("settings.resetDescription")}</p>
           </div>
         </div>
 
         <ul className="resetList">
-          <li>Remove contas locais listadas pelo GitHub CLI.</li>
-          <li>Executa limpeza global de user.name e user.email no Git.</li>
-          <li>Apaga perfis locais e arquivos .gitconfig-gim-*.</li>
+          <li>{t("settings.resetItemAccounts")}</li>
+          <li>{t("settings.resetItemGit")}</li>
+          <li>{t("settings.resetItemProfiles")}</li>
         </ul>
 
         <button className="dangerAction resetButton" type="button" onClick={() => setConfirmOpen(true)}>
           <RotateCcw size={16} />
-          Resetar tudo
+          {t("settings.resetAll")}
         </button>
       </section>
 
       {result && (
         <section className="panel resetResult">
-          <h2>Aplicativo resetado.</h2>
+          <h2>{t("settings.resetDone")}</h2>
           <div className="resetStats">
-            <span>Contas removidas: {result.loggedOutAccounts}</span>
-            <span>Config Git limpa: {result.clearedGitConfig ? "Sim" : "Não"}</span>
-            <span>Perfis removidos: {result.removedProfiles ? "Sim" : "Não"}</span>
-            <span>Arquivos removidos: {result.removedManagedFiles}</span>
+            <span>{t("settings.accountsRemoved", { count: result.loggedOutAccounts })}</span>
+            <span>{t("settings.gitConfigClean", { value: result.clearedGitConfig ? t("common.yes") : t("common.no") })}</span>
+            <span>{t("settings.profilesRemoved", { value: result.removedProfiles ? t("common.yes") : t("common.no") })}</span>
+            <span>{t("settings.filesRemoved", { count: result.removedManagedFiles })}</span>
           </div>
           {result.warnings.length > 0 && (
             <div className="warningList">
-              <strong>Avisos</strong>
+              <strong>{t("settings.warnings")}</strong>
               {result.warnings.map((warning) => (
                 <p key={warning}>{warning}</p>
               ))}
@@ -95,21 +124,21 @@ function Settings({ state }: { state: AppState }) {
           <section className="modalPanel" role="dialog" aria-modal="true" aria-labelledby="reset-title">
             <div className="modalHeader">
               <div>
-                <h2 id="reset-title">Confirmar reset</h2>
-                <p>Digite RESETAR para confirmar a remoção das contas locais, perfis e configurações globais do Git.</p>
+                <h2 id="reset-title">{t("settings.confirmTitle")}</h2>
+                <p>{t("settings.confirmDescription")}</p>
               </div>
-              <button className="iconButton" type="button" onClick={closeModal} title="Fechar" disabled={resetting}>
+              <button className="iconButton" type="button" onClick={closeModal} title={t("common.close")} disabled={resetting}>
                 <X size={18} />
               </button>
             </div>
 
             <label className="confirmField">
-              Confirmação
+              {t("settings.confirmation")}
               <span className="inputShell">
                 <input
                   value={confirmation}
                   onChange={(event) => setConfirmation(event.target.value)}
-                  placeholder="RESETAR"
+                  placeholder={resetConfirmation}
                   disabled={resetting}
                 />
               </span>
@@ -120,10 +149,10 @@ function Settings({ state }: { state: AppState }) {
             <div className="editorActions">
               <button className="dangerAction" type="button" onClick={runReset} disabled={!canReset}>
                 {resetting && <span className="buttonSpinner" aria-hidden="true" />}
-                {resetting ? "Resetando" : "Resetar tudo"}
+                {resetting ? t("settings.resetting") : t("settings.resetAll")}
               </button>
               <button className="secondaryAction" type="button" onClick={closeModal} disabled={resetting}>
-                Cancelar
+                {t("common.cancel")}
               </button>
             </div>
           </section>
