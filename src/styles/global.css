@@ -502,7 +502,20 @@ h2 {
 }
 
 .inputShell select {
+  padding: 0 12px;
+  background-color: var(--surface-2);
+  color-scheme: dark;
   cursor: pointer;
+}
+
+.inputShell select option {
+  color: var(--text);
+  background-color: var(--surface-2);
+}
+
+.inputShell select option:checked {
+  color: #ffffff;
+  background-color: var(--surface-3);
 }
 
 .searchField input::placeholder,
