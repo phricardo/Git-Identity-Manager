@@ -623,8 +623,8 @@ h1 {
   max-width: 1040px;
   margin: 0;
   color: var(--color-text-primary);
-  font-size: clamp(2rem, 4.2vw, 3.85rem);
-  line-height: 1.05;
+  font-size: clamp(1.9rem, 3vw, 3rem);
+  line-height: 1.08;
   letter-spacing: 0;
   overflow-wrap: anywhere;
 }
@@ -633,15 +633,15 @@ h1 {
   max-width: 760px;
   margin: 0;
   color: #b4b7b6;
-  font-size: clamp(1rem, 1.7vw, 1.22rem);
+  font-size: 0.96rem;
   line-height: 1.55;
 }
 
 .howItWorksFlow {
   display: grid;
-  grid-template-columns: minmax(260px, 0.92fr) minmax(280px, 0.78fr) minmax(300px, 0.95fr);
+  grid-template-columns: minmax(260px, 0.92fr) 96px 310px minmax(300px, 0.95fr);
   align-items: center;
-  gap: 24px;
+  gap: 0;
 }
 
 .workflowSources {
@@ -652,12 +652,12 @@ h1 {
 .workflowSourceCard,
 .workflowCore,
 .workflowWindow {
-  border: 1px solid rgba(35, 220, 188, 0.26);
+  border: 1px solid rgba(148, 163, 160, 0.14);
   border-radius: 8px;
-  background: rgba(0, 8, 10, 0.82);
+  background: rgba(0, 8, 10, 0.86);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 0 34px rgba(35, 220, 188, 0.08);
+    0 18px 54px rgba(0, 0, 0, 0.28);
 }
 
 .workflowSourceCard {
@@ -674,16 +674,17 @@ h1 {
   place-items: center;
   width: 74px;
   height: 74px;
-  border: 1px solid rgba(35, 220, 188, 0.42);
+  border: 1px solid rgba(148, 163, 160, 0.16);
   border-radius: 8px;
   color: var(--color-primary);
-  background: radial-gradient(circle at 50% 40%, rgba(35, 220, 188, 0.18), rgba(35, 220, 188, 0.04));
+  background: rgba(8, 18, 17, 0.72);
+  box-shadow: 0 0 18px rgba(35, 220, 188, 0.08);
 }
 
 .workflowSourceCard h3 {
   margin: 0;
   color: var(--color-text-primary);
-  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-size: 1rem;
 }
 
 .workflowSourceCard p {
@@ -707,14 +708,11 @@ h1 {
   min-height: 300px;
   padding: 30px 22px;
   text-align: center;
-  border-color: rgba(35, 220, 188, 0.72);
-  background:
-    radial-gradient(circle at 50% 0%, rgba(35, 220, 188, 0.15), transparent 10rem),
-    rgba(0, 8, 10, 0.9);
+  border-color: rgba(148, 163, 160, 0.16);
+  background: rgba(0, 8, 10, 0.9);
   box-shadow:
-    inset 0 0 0 1px rgba(35, 220, 188, 0.18),
-    0 0 48px rgba(35, 220, 188, 0.22),
-    0 0 96px rgba(35, 220, 188, 0.1);
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 24px 72px rgba(0, 0, 0, 0.34);
 }
 
 .workflowCoreIcon {
@@ -724,14 +722,21 @@ h1 {
   height: 82px;
   margin-bottom: 18px;
   color: var(--color-primary);
+  border: 1px solid rgba(148, 163, 160, 0.14);
   border-radius: 8px;
-  background: rgba(35, 220, 188, 0.08);
+  background: rgba(8, 18, 17, 0.72);
+  box-shadow: 0 0 22px rgba(35, 220, 188, 0.1);
+}
+
+.workflowCoreIcon svg {
+  width: 70px;
+  height: 70px;
 }
 
 .workflowCore h3 {
   margin: 0;
   color: var(--color-text-primary);
-  font-size: clamp(1.4rem, 2.4vw, 1.95rem);
+  font-size: clamp(1.25rem, 2vw, 1.65rem);
   line-height: 1.18;
 }
 
@@ -749,14 +754,17 @@ h1 {
   gap: 7px;
   min-height: 38px;
   padding: 0 13px;
-  border: 1px solid rgba(35, 220, 188, 0.3);
+  border: 1px solid rgba(148, 163, 160, 0.16);
   border-radius: 999px;
-  color: #b7fff4;
+  color: #dce8e6;
   font-weight: 800;
-  background: rgba(3, 20, 18, 0.86);
+  background: rgba(8, 18, 17, 0.72);
 }
 
-.workflowConnectorLeft,
+.workflowActions span svg {
+  color: var(--color-primary);
+}
+
 .workflowConnectorRight {
   position: absolute;
   top: 50%;
@@ -766,15 +774,10 @@ h1 {
   transform: translateY(-50%);
 }
 
-.workflowConnectorLeft {
-  left: -88px;
-}
-
 .workflowConnectorRight {
   right: -88px;
 }
 
-.workflowConnectorLeft::after,
 .workflowConnectorRight::after {
   position: absolute;
   top: 50%;
@@ -787,12 +790,106 @@ h1 {
   transform: translateY(-50%);
 }
 
-.workflowConnectorLeft::after {
-  right: 0;
-}
-
 .workflowConnectorRight::after {
   left: 0;
+}
+
+.workflowInputConnector {
+  --connector-color: rgba(35, 220, 188, 0.86);
+  --connector-muted: rgba(35, 220, 188, 0.28);
+  --connector-glow: rgba(35, 220, 188, 0.38);
+  position: relative;
+  width: 96px;
+  height: 250px;
+  margin-left: -1px;
+  margin-right: -1px;
+}
+
+.workflowInputBranchTop,
+.workflowInputBranchBottom,
+.workflowInputTrunk,
+.workflowInputExit {
+  position: absolute;
+  display: block;
+  border-color: var(--connector-color);
+  filter: drop-shadow(0 0 5px var(--connector-glow));
+}
+
+.workflowInputBranchTop,
+.workflowInputBranchBottom {
+  right: 48px;
+  width: 49px;
+  height: 62px;
+}
+
+.workflowInputBranchTop {
+  top: 58px;
+  border-top: 2px solid var(--connector-color);
+  border-right: 2px solid var(--connector-color);
+  border-radius: 0 16px 0 0;
+}
+
+.workflowInputBranchBottom {
+  bottom: 58px;
+  border-right: 2px solid var(--connector-color);
+  border-bottom: 2px solid var(--connector-color);
+  border-radius: 0 0 16px 0;
+}
+
+.workflowInputTrunk {
+  top: 120px;
+  right: 48px;
+  width: 2px;
+  height: 10px;
+  background: var(--connector-color);
+  border-radius: 999px;
+  box-shadow: 0 0 8px var(--connector-glow);
+}
+
+.workflowInputExit {
+  top: 124px;
+  right: 0;
+  width: 48px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--connector-color), var(--connector-muted));
+  border-radius: 999px;
+  box-shadow: 0 0 8px var(--connector-glow);
+}
+
+.workflowInputNodeTop,
+.workflowInputNodeBottom,
+.workflowInputNodeJoin,
+.workflowInputNodeCore {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: #9ffff4;
+  box-shadow: 0 0 16px rgba(35, 220, 188, 0.72);
+  transform: translate(-50%, -50%);
+}
+
+.workflowInputNodeTop {
+  top: 58px;
+  left: 0;
+}
+
+.workflowInputNodeBottom {
+  top: 192px;
+  left: 0;
+}
+
+.workflowInputNodeJoin {
+  top: 125px;
+  left: 48px;
+}
+
+.workflowInputNodeCore {
+  top: 125px;
+  right: 0;
+  transform: translate(50%, -50%);
 }
 
 .workflowOutput {
@@ -805,23 +902,21 @@ h1 {
   width: min(100%, 390px);
   min-height: 282px;
   overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(35, 220, 188, 0.12), transparent 12rem),
-    rgba(0, 8, 10, 0.86);
+  background: rgba(0, 8, 10, 0.86);
 }
 
 .workflowWindowBar {
   display: flex;
   gap: 8px;
   padding: 15px 18px;
-  border-bottom: 1px solid rgba(35, 220, 188, 0.18);
+  border-bottom: 1px solid rgba(148, 163, 160, 0.14);
 }
 
 .workflowWindowBar span {
   width: 10px;
   height: 10px;
   border-radius: 999px;
-  background: rgba(183, 255, 248, 0.82);
+  background: rgba(148, 163, 160, 0.72);
 }
 
 .workflowWindowBody {
@@ -843,9 +938,10 @@ h1 {
   width: 52px;
   height: 52px;
   padding: 12px;
-  border: 1px solid rgba(35, 220, 188, 0.22);
+  border: 1px solid rgba(148, 163, 160, 0.14);
   border-radius: 999px;
-  background: rgba(35, 220, 188, 0.1);
+  background: rgba(8, 18, 17, 0.72);
+  box-shadow: 0 0 18px rgba(35, 220, 188, 0.08);
 }
 
 .workflowWindowSidebar span,
@@ -853,7 +949,7 @@ h1 {
 .workflowWindowCard small {
   display: block;
   border-radius: 999px;
-  background: rgba(98, 228, 213, 0.18);
+  background: rgba(148, 163, 160, 0.18);
 }
 
 .workflowWindowSidebar span {
@@ -873,14 +969,14 @@ h1 {
   gap: 10px;
   min-height: 62px;
   padding: 14px;
-  border: 1px solid rgba(35, 220, 188, 0.16);
+  border: 1px solid rgba(148, 163, 160, 0.12);
   border-radius: 8px;
   background: rgba(9, 24, 22, 0.78);
 }
 
 .workflowWindowCardActive {
-  border-color: rgba(35, 220, 188, 0.48);
-  box-shadow: 0 0 22px rgba(35, 220, 188, 0.12);
+  border-color: rgba(148, 163, 160, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .workflowWindowCard span {
@@ -905,7 +1001,7 @@ h1 {
 
 .workflowOutput strong {
   color: var(--color-primary);
-  font-size: clamp(1.35rem, 2.2vw, 2rem);
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
   text-align: center;
 }
 
@@ -916,7 +1012,7 @@ h1 {
   gap: 16px;
   margin: 0;
   color: var(--color-text-primary);
-  font-size: clamp(1.15rem, 2vw, 1.8rem);
+  font-size: clamp(1rem, 1.7vw, 1.35rem);
   line-height: 1.35;
   text-align: center;
 }
@@ -927,10 +1023,11 @@ h1 {
   flex: 0 0 auto;
   width: 54px;
   height: 54px;
-  border: 1px solid rgba(35, 220, 188, 0.3);
+  border: 1px solid rgba(148, 163, 160, 0.14);
   border-radius: 999px;
   color: var(--color-primary);
-  background: rgba(3, 20, 18, 0.82);
+  background: rgba(8, 18, 17, 0.72);
+  box-shadow: 0 0 18px rgba(35, 220, 188, 0.08);
 }
 
 .downloadPanel {
@@ -1209,7 +1306,7 @@ h1 {
     justify-items: center;
   }
 
-  .workflowConnectorLeft,
+  .workflowInputConnector,
   .workflowConnectorRight {
     display: none;
   }

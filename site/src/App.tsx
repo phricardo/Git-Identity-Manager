@@ -1,7 +1,6 @@
 import {
   ArrowDownToLine,
   ArrowLeft,
-  Bot,
   Check,
   Code2,
   Eye,
@@ -20,6 +19,7 @@ import {
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { BrandIcon } from "./components/BrandIcon";
 import { DebianIcon, LinuxIcon, MintIcon, UbuntuIcon, WindowsIcon, type OsIconProps } from "./components/OsIcons";
 import logoUrl from "./assets/logo.svg";
 import screenshotUrl from "./assets/app-screen--001.png";
@@ -302,8 +302,18 @@ function HowItWorksSection() {
             </article>
           </div>
 
+          <div className={styles.workflowInputConnector} aria-hidden="true">
+            <span className={styles.workflowInputBranchTop} />
+            <span className={styles.workflowInputBranchBottom} />
+            <span className={styles.workflowInputTrunk} />
+            <span className={styles.workflowInputExit} />
+            <span className={styles.workflowInputNodeTop} />
+            <span className={styles.workflowInputNodeBottom} />
+            <span className={styles.workflowInputNodeJoin} />
+            <span className={styles.workflowInputNodeCore} />
+          </div>
+
           <div className={styles.workflowCoreWrap}>
-            <span className={styles.workflowConnectorLeft} aria-hidden="true" />
             <motion.div
               className={styles.workflowCore}
               initial={{ opacity: 0, scale: 0.96 }}
@@ -312,7 +322,7 @@ function HowItWorksSection() {
               transition={{ duration: 0.45, ease: "easeOut" }}
             >
               <span className={styles.workflowCoreIcon}>
-                <Bot size={54} aria-hidden="true" />
+                <BrandIcon size={64} aria-hidden="true" />
               </span>
               <h3>
                 Git Identity
