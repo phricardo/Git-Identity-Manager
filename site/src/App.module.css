@@ -24,36 +24,20 @@
   min-height: 100svh;
   padding: 0;
   border-bottom: 1px solid rgba(35, 220, 188, 0.16);
-  background:
-    radial-gradient(circle at 78% 70%, rgba(35, 220, 188, 0.18), transparent 28%),
-    radial-gradient(circle at 14% 8%, rgba(35, 220, 188, 0.12), transparent 23%),
-    linear-gradient(180deg, var(--color-bg) 0%, #00080a 54%, var(--color-bg) 100%);
+  background-image:
+    linear-gradient(180deg, rgba(0, 8, 10, 0.18) 0%, rgba(0, 8, 10, 0.04) 54%, rgba(0, 8, 10, 0.42) 100%),
+    url("./assets/green-mesh-gradient.svg");
+  background-position: center top;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .hero::before {
   position: absolute;
-  inset: 82px 0 0;
+  inset: 0;
   content: "";
   pointer-events: none;
-  background-image:
-    linear-gradient(rgba(35, 220, 188, 0.055) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(35, 220, 188, 0.055) 1px, transparent 1px);
-  background-size: 52px 52px;
-  mask-image: linear-gradient(180deg, transparent 0%, #000 24%, #000 76%, transparent 100%);
-}
-
-.hero::after {
-  position: absolute;
-  right: -8vw;
-  bottom: 6vh;
-  width: 68vw;
-  height: 20vw;
-  content: "";
-  pointer-events: none;
-  border: 1px solid rgba(35, 220, 188, 0.18);
-  border-color: rgba(35, 220, 188, 0.18) transparent transparent transparent;
-  border-radius: 50%;
-  transform: rotate(-8deg);
+  background: linear-gradient(90deg, rgba(0, 8, 10, 0.34) 0%, rgba(0, 8, 10, 0) 46%, rgba(0, 8, 10, 0.18) 100%);
 }
 
 .nav {

@@ -1,0 +1,32 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1920" height="1080" fill="#020706"/>
+  <defs>
+    <radialGradient id="g1" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1390 470) rotate(132) scale(690 430)">
+      <stop stop-color="#2DFFE0" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#2DFFE0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(620 360) rotate(122) scale(560 360)">
+      <stop stop-color="#15D7B9" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#15D7B9" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="g3" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(260 210) rotate(105) scale(460 320)">
+      <stop stop-color="#079A82" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#079A82" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="fade" x1="0" y1="0" x2="1920" y2="1080">
+      <stop stop-color="#05221F"/>
+      <stop offset="0.45" stop-color="#020807"/>
+      <stop offset="1" stop-color="#06312B"/>
+    </linearGradient>
+    <pattern id="grid" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M 72 0 L 0 0 0 72" fill="none" stroke="#36F7D7" stroke-opacity="0.08" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#fade)"/>
+  <rect width="1920" height="1080" fill="url(#g1)"/>
+  <rect width="1920" height="1080" fill="url(#g2)"/>
+  <rect width="1920" height="1080" fill="url(#g3)"/>
+  <rect width="1920" height="1080" fill="url(#grid)" opacity="0.8"/>
+  <path d="M-60 1080C370 750 1130 710 2040 594" stroke="#38FFE1" stroke-opacity="0.32"/>
+  <path d="M-40 1106C470 790 1160 760 1990 644" stroke="#38FFE1" stroke-opacity="0.13"/>
+</svg>
