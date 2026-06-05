@@ -246,54 +246,6 @@ export function App() {
         </div>
       </section>
 
-      <section className={styles.screenshotSection} aria-labelledby="screenshot-title">
-        <div className={styles.shell}>
-          <div className={styles.screenshotGrid}>
-            <motion.div
-              className={styles.screenshotCopy}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.35 }}
-              transition={{ duration: 0.45, ease: "easeOut" }}
-            >
-              <span className={styles.codeLabel}>preview_001</span>
-              <h2 id="screenshot-title">
-                Clear visibility into{" "}
-                <span className={styles.impactText}>every local</span>{" "}
-                <span className={styles.impactText}>identity.</span>
-              </h2>
-              <p>
-                Review Git profiles, GitHub CLI accounts, and diagnostics from
-                one focused desktop surface.
-              </p>
-              <div className={`${styles.actions} ${styles.previewActions}`}>
-                <a className={styles.primaryButton} href="#downloads">
-                  <ArrowDownToLine size={18} aria-hidden="true" />
-                  Download
-                </a>
-                <a className={styles.secondaryButton} href={SOURCE_CODE_URL} target="_blank" rel="noreferrer">
-                  <Github size={18} aria-hidden="true" />
-                  Source code
-                </a>
-              </div>
-            </motion.div>
-            <motion.div
-              className={styles.screenshotFrame}
-              initial={{ opacity: 0, x: 18 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.5 }}
-            >
-              <img
-                className={styles.appScreenshot}
-                src={screenshotUrl}
-                alt="Git Identity Manager interface screenshot"
-              />
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
       <section className={styles.section} id="downloads">
         <div className={styles.shell}>
           <DownloadPanel />

@@ -254,11 +254,6 @@ h1 {
   transform: translateY(-1px);
 }
 
-.previewActions {
-  margin-top: 22px;
-  margin-bottom: 0;
-}
-
 .primaryButton,
 .secondaryButton {
   display: inline-flex;
@@ -482,8 +477,7 @@ h1 {
   }
 }
 
-.section,
-.screenshotSection {
+.section {
   position: relative;
   padding: 82px 0;
   background-color: var(--color-bg);
@@ -503,7 +497,6 @@ h1 {
 }
 
 .sectionHeader h2,
-.screenshotGrid h2,
 .downloadPanel h2 {
   max-width: 680px;
   margin-bottom: 0;
@@ -550,34 +543,11 @@ h1 {
 }
 
 .featureCard p,
-.screenshotGrid p,
 .downloadPanel p {
   margin-bottom: 0;
   color: #93c4bb;
   font-size: 0.96rem;
   line-height: 1.65;
-}
-
-.screenshotSection {
-  border-block: 1px solid rgba(35, 220, 188, 0.14);
-}
-
-.screenshotGrid {
-  display: grid;
-  grid-template-columns: minmax(300px, 0.62fr) minmax(640px, 1.38fr);
-  align-items: start;
-  gap: 56px;
-}
-
-.screenshotCopy {
-  position: sticky;
-  top: calc(var(--nav-height) + 24px);
-}
-
-.screenshotGrid h2 {
-  position: relative;
-  margin-top: 16px;
-  margin-bottom: 16px;
 }
 
 .markerText {
@@ -850,7 +820,6 @@ h1 {
   }
 
   .heroGrid,
-  .screenshotGrid,
   .downloadPanel {
     grid-template-columns: 1fr;
   }
@@ -999,12 +968,7 @@ h1 {
     border-radius: 9px;
   }
 
-  .screenshotCopy {
-    position: static;
-  }
-
   .sectionHeader h2,
-  .screenshotGrid h2,
   .downloadPanel h2 {
     max-width: 100%;
   }
@@ -1069,8 +1033,7 @@ h1 {
     width: 100%;
   }
 
-  .section,
-  .screenshotSection {
+  .section {
     padding: 62px 0;
   }
 
