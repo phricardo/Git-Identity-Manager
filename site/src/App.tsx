@@ -5,6 +5,7 @@ import {
   Github,
   PanelsTopLeft,
   ShieldCheck,
+  Shapes,
   Sparkles,
   Star,
   UserRoundCog,
@@ -70,7 +71,7 @@ export function App() {
             </a>
             <div className={styles.navLinks}>
               <a href="#features">
-                <Sparkles size={14} aria-hidden="true" />
+                <Shapes size={14} aria-hidden="true" />
                 Features
               </a>
               <a href={ALL_DOWNLOADS_PATH}>
