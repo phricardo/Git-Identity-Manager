@@ -228,7 +228,9 @@ export function App() {
         <div className={styles.shell}>
           <div className={styles.sectionHeader}>
             <span className={styles.codeLabel}>features.map()</span>
-            <h2>Built for identity-heavy Git workflows.</h2>
+            <h2>
+              Built for <span className={styles.impactText}>identity-heavy</span> Git workflows.
+            </h2>
           </div>
           <div className={styles.featureGrid}>
             {features.map((feature, index) => {
@@ -272,7 +274,9 @@ function HowItWorksSection() {
       <div className={`${styles.shell} ${styles.howItWorksShell}`}>
         <div className={styles.howItWorksHeader}>
           <span className={styles.howItWorksEyebrow}>How it works</span>
-          <h2 id="how-it-works-title">Keep Git and GitHub CLI. Get a simpler workflow.</h2>
+          <h2 id="how-it-works-title">
+            Keep Git and GitHub CLI. Get a <span className={styles.impactText}>simpler</span> workflow.
+          </h2>
           <p>
             We build on top of the tools you already use, unify the setup, and turn repetitive
             terminal work into a visual 1-click experience.
