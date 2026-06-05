@@ -451,7 +451,9 @@ function DownloadsPage() {
         <section className={styles.releaseCard} aria-label={`${RELEASE_VERSION} downloads`}>
           <div className={styles.releaseMeta}>
             <strong>{RELEASE_VERSION}</strong>
-            <span>Current release</span>
+            <span className={styles.releaseBadge}>LTS</span>
+            <span className={styles.releaseDivider} aria-hidden="true" />
+            <span className={styles.releaseRecommendation}>Recommended for most users</span>
           </div>
           <div className={styles.releaseDownloads}>
             {[...DOWNLOADS]

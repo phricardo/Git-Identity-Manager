@@ -17,6 +17,7 @@
 
 .downloadsPage .downloadsShell {
   flex: 1;
+  min-height: calc(100svh - 18px);
 }
 
 .hero {
@@ -1214,22 +1215,47 @@ h1 {
 .releaseMeta {
   display: flex;
   align-items: center;
-  gap: 14px;
+  flex-wrap: wrap;
+  gap: 12px 16px;
   margin-bottom: 26px;
 }
 
 .releaseMeta strong {
   color: var(--color-text-primary);
   font-family: var(--font-code);
-  font-size: 1.45rem;
+  font-size: clamp(1.35rem, 2.4vw, 1.65rem);
   font-weight: 700;
+  line-height: 1;
 }
 
-.releaseMeta span {
-  color: #93c4bb;
+.releaseBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 10px;
+  border: 1px solid rgba(35, 220, 188, 0.82);
+  border-radius: 4px;
+  color: var(--color-primary);
   font-family: var(--font-code);
-  font-size: 0.76rem;
-  font-weight: 700;
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1;
+  background: rgba(2, 20, 18, 0.72);
+  box-shadow:
+    inset 0 0 0 1px rgba(35, 220, 188, 0.08),
+    0 0 16px rgba(35, 220, 188, 0.1);
+}
+
+.releaseDivider {
+  width: 1px;
+  height: 24px;
+  background: rgba(148, 163, 160, 0.2);
+}
+
+.releaseRecommendation {
+  color: #b8d4cf;
+  font-size: 0.98rem;
+  line-height: 1.35;
 }
 
 .releaseDownloads {
@@ -1582,6 +1608,14 @@ h1 {
 
   .releaseCard {
     padding: 22px;
+  }
+
+  .releaseMeta {
+    gap: 10px 12px;
+  }
+
+  .releaseDivider {
+    display: none;
   }
 
   .releaseDownloads,
