@@ -3,12 +3,15 @@ import {
   ArrowLeft,
   Code2,
   Github,
+  Menu,
   PanelsTopLeft,
   ShieldCheck,
   Shapes,
   Star,
   UserRoundCog,
+  X,
 } from "lucide-react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { DebianIcon, LinuxIcon, UbuntuIcon, WindowsIcon, type OsIconProps } from "./components/OsIcons";
 import logoUrl from "./assets/logo.svg";
@@ -54,7 +57,9 @@ const features = [
 ] as const;
 
 export function App() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isDownloadsPage = window.location.pathname === ALL_DOWNLOADS_PATH;
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   if (isDownloadsPage) {
     return <DownloadsPage />;
@@ -68,20 +73,33 @@ export function App() {
             <a className={styles.brandMark} href="#top" aria-label="Git Identity Manager">
               <img src={logoUrl} alt="Git Identity Manager" />
             </a>
-            <div className={styles.navLinks}>
-              <a href="#features">
+            <button
+              className={styles.mobileMenuButton}
+              type="button"
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-controls="primary-navigation"
+              aria-expanded={isMobileMenuOpen}
+              onClick={() => setIsMobileMenuOpen((isOpen) => !isOpen)}
+            >
+              {isMobileMenuOpen ? <X size={20} aria-hidden="true" /> : <Menu size={20} aria-hidden="true" />}
+            </button>
+            <div
+              className={`${styles.navLinks} ${isMobileMenuOpen ? styles.navLinksOpen : ""}`}
+              id="primary-navigation"
+            >
+              <a href="#features" onClick={closeMobileMenu}>
                 <Shapes size={14} aria-hidden="true" />
                 Features
               </a>
-              <a href={ALL_DOWNLOADS_PATH}>
+              <a href={ALL_DOWNLOADS_PATH} onClick={closeMobileMenu}>
                 <ArrowDownToLine size={14} aria-hidden="true" />
                 Downloads
               </a>
-              <a href={SOURCE_CODE_URL} target="_blank" rel="noreferrer">
+              <a href={SOURCE_CODE_URL} target="_blank" rel="noreferrer" onClick={closeMobileMenu}>
                 <Code2 size={14} aria-hidden="true" />
                 Source
               </a>
-              <a className={styles.starLink} href={SOURCE_CODE_URL} target="_blank" rel="noreferrer">
+              <a className={styles.starLink} href={SOURCE_CODE_URL} target="_blank" rel="noreferrer" onClick={closeMobileMenu}>
                 <Star size={14} aria-hidden="true" />
                 Star on GitHub
               </a>
@@ -258,7 +276,7 @@ function DownloadsPage() {
           </a>
           <a className={styles.backLink} href="/">
             <ArrowLeft size={16} aria-hidden="true" />
-            Back to home
+            Back
           </a>
         </nav>
 
