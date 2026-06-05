@@ -6,7 +6,6 @@ import {
   PanelsTopLeft,
   ShieldCheck,
   Shapes,
-  Sparkles,
   Star,
   UserRoundCog,
 } from "lucide-react";
@@ -78,11 +77,11 @@ export function App() {
                 <ArrowDownToLine size={14} aria-hidden="true" />
                 Downloads
               </a>
-              <a href={SOURCE_CODE_URL}>
+              <a href={SOURCE_CODE_URL} target="_blank" rel="noreferrer">
                 <Code2 size={14} aria-hidden="true" />
                 Source
               </a>
-              <a className={styles.starLink} href={SOURCE_CODE_URL}>
+              <a className={styles.starLink} href={SOURCE_CODE_URL} target="_blank" rel="noreferrer">
                 <Star size={14} aria-hidden="true" />
                 Star on GitHub
               </a>
@@ -113,7 +112,7 @@ export function App() {
                   <ArrowDownToLine size={18} aria-hidden="true" />
                   Download
                 </a>
-                <a className={styles.secondaryButton} href={SOURCE_CODE_URL}>
+                <a className={styles.secondaryButton} href={SOURCE_CODE_URL} target="_blank" rel="noreferrer">
                   <Github size={18} aria-hidden="true" />
                   Source code
                 </a>
@@ -179,6 +178,16 @@ export function App() {
                 Review Git profiles, GitHub CLI accounts, and diagnostics from
                 one focused desktop surface.
               </p>
+              <div className={`${styles.actions} ${styles.previewActions}`}>
+                <a className={styles.primaryButton} href="#downloads">
+                  <ArrowDownToLine size={18} aria-hidden="true" />
+                  Download
+                </a>
+                <a className={styles.secondaryButton} href={SOURCE_CODE_URL} target="_blank" rel="noreferrer">
+                  <Github size={18} aria-hidden="true" />
+                  Source code
+                </a>
+              </div>
             </div>
             <motion.div
               className={styles.screenshotFrame}
@@ -292,7 +301,7 @@ function SiteFooter() {
             License
           </a>
           <span aria-hidden="true">|</span>
-          <a className={styles.footerLink} href={SOURCE_CODE_URL}>
+          <a className={styles.footerLink} href={SOURCE_CODE_URL} target="_blank" rel="noreferrer">
             Source code
           </a>
         </div>

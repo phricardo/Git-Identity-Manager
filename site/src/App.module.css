@@ -235,6 +235,11 @@ h1 {
   margin-bottom: 14px;
 }
 
+.previewActions {
+  margin-top: 22px;
+  margin-bottom: 0;
+}
+
 .primaryButton,
 .secondaryButton {
   display: inline-flex;
@@ -269,8 +274,9 @@ h1 {
 }
 
 .secondaryButton:hover {
-  color: var(--color-primary);
-  border-color: var(--color-primary);
+  color: #e8efed;
+  border-color: rgba(35, 220, 188, 0.44);
+  box-shadow: 0 0 18px rgba(35, 220, 188, 0.1);
 }
 
 .mockupWindow {
