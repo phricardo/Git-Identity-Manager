@@ -1,14 +1,21 @@
 import {
   ArrowDownToLine,
   ArrowLeft,
+  Bot,
+  Check,
   Code2,
+  Eye,
+  GitBranch,
   Github,
   Menu,
+  Network,
   PanelsTopLeft,
   ShieldCheck,
   Shapes,
   Star,
+  Terminal,
   UserRoundCog,
+  Zap,
   X,
 } from "lucide-react";
 import { useRef, useState } from "react";
@@ -246,6 +253,8 @@ export function App() {
         </div>
       </section>
 
+      <HowItWorksSection />
+
       <section className={styles.section} id="downloads">
         <div className={styles.shell}>
           <DownloadPanel />
@@ -254,6 +263,122 @@ export function App() {
 
       <SiteFooter />
     </main>
+  );
+}
+
+function HowItWorksSection() {
+  return (
+    <section className={styles.howItWorksSection} aria-labelledby="how-it-works-title">
+      <div className={`${styles.shell} ${styles.howItWorksShell}`}>
+        <div className={styles.howItWorksHeader}>
+          <span className={styles.howItWorksEyebrow}>How it works</span>
+          <h2 id="how-it-works-title">Keep Git and GitHub CLI. Get a simpler workflow.</h2>
+          <p>
+            We build on top of the tools you already use, unify the setup, and turn repetitive
+            terminal work into a visual 1-click experience.
+          </p>
+        </div>
+
+        <div className={styles.howItWorksFlow}>
+          <div className={styles.workflowSources} aria-label="Source tools">
+            <article className={styles.workflowSourceCard}>
+              <span className={styles.workflowIconBox}>
+                <GitBranch size={34} aria-hidden="true" />
+              </span>
+              <div>
+                <h3>Git</h3>
+                <p>user.name, user.email, git config</p>
+              </div>
+            </article>
+
+            <article className={styles.workflowSourceCard}>
+              <span className={styles.workflowIconBox}>
+                <Terminal size={34} aria-hidden="true" />
+              </span>
+              <div>
+                <h3>GitHub CLI</h3>
+                <p>auth login, auth status, auth switch</p>
+              </div>
+            </article>
+          </div>
+
+          <div className={styles.workflowCoreWrap}>
+            <span className={styles.workflowConnectorLeft} aria-hidden="true" />
+            <motion.div
+              className={styles.workflowCore}
+              initial={{ opacity: 0, scale: 0.96 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true, amount: 0.45 }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+            >
+              <span className={styles.workflowCoreIcon}>
+                <Bot size={54} aria-hidden="true" />
+              </span>
+              <h3>
+                Git Identity
+                <br />
+                Manager Core
+              </h3>
+              <div className={styles.workflowActions}>
+                <span>
+                  <Eye size={17} aria-hidden="true" />
+                  Read
+                </span>
+                <span>
+                  <Network size={17} aria-hidden="true" />
+                  Unify
+                </span>
+                <span>
+                  <Check size={17} aria-hidden="true" />
+                  Apply
+                </span>
+              </div>
+            </motion.div>
+            <span className={styles.workflowConnectorRight} aria-hidden="true" />
+          </div>
+
+          <div className={styles.workflowOutput}>
+            <div className={styles.workflowWindow} aria-hidden="true">
+              <div className={styles.workflowWindowBar}>
+                <span />
+                <span />
+                <span />
+              </div>
+              <div className={styles.workflowWindowBody}>
+                <aside className={styles.workflowWindowSidebar}>
+                  <UserRoundCog size={30} aria-hidden="true" />
+                  <span />
+                  <span />
+                </aside>
+                <div className={styles.workflowWindowCards}>
+                  <div className={styles.workflowWindowCard}>
+                    <span />
+                    <small />
+                  </div>
+                  <div className={`${styles.workflowWindowCard} ${styles.workflowWindowCardActive}`}>
+                    <span />
+                    <small />
+                    <Check size={18} aria-hidden="true" />
+                  </div>
+                  <div className={styles.workflowWindowCard}>
+                    <span />
+                    <small />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <strong>1-click desktop UI</strong>
+          </div>
+        </div>
+
+        <p className={styles.workflowTagline}>
+          <span>
+            <Zap size={24} aria-hidden="true" />
+          </span>
+          Less repetition. More clarity. Faster switching.
+        </p>
+      </div>
+    </section>
   );
 }
 

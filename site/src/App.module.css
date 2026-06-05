@@ -572,6 +572,367 @@ h1 {
   box-shadow: 0 0 30px rgba(35, 220, 188, 0.26);
 }
 
+.howItWorksSection {
+  position: relative;
+  overflow: hidden;
+  padding: 86px 0;
+  border-block: 1px solid rgba(35, 220, 188, 0.14);
+  background:
+    radial-gradient(circle at 50% 48%, rgba(35, 220, 188, 0.1), transparent 32rem),
+    linear-gradient(180deg, #020706 0%, #03110f 100%);
+  isolation: isolate;
+}
+
+.howItWorksSection::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  background-image:
+    linear-gradient(rgba(35, 220, 188, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(35, 220, 188, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(180deg, transparent 0%, #000 14%, #000 86%, transparent 100%);
+}
+
+.howItWorksShell {
+  display: grid;
+  gap: 48px;
+}
+
+.howItWorksHeader {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  max-width: 980px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.howItWorksEyebrow {
+  color: var(--color-primary);
+  font-family: var(--font-code);
+  font-size: 0.88rem;
+  font-weight: 800;
+  letter-spacing: 0.38em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.howItWorksHeader h2 {
+  max-width: 1040px;
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: clamp(2rem, 4.2vw, 3.85rem);
+  line-height: 1.05;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.howItWorksHeader p {
+  max-width: 760px;
+  margin: 0;
+  color: #b4b7b6;
+  font-size: clamp(1rem, 1.7vw, 1.22rem);
+  line-height: 1.55;
+}
+
+.howItWorksFlow {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.92fr) minmax(280px, 0.78fr) minmax(300px, 0.95fr);
+  align-items: center;
+  gap: 24px;
+}
+
+.workflowSources {
+  display: grid;
+  gap: 18px;
+}
+
+.workflowSourceCard,
+.workflowCore,
+.workflowWindow {
+  border: 1px solid rgba(35, 220, 188, 0.26);
+  border-radius: 8px;
+  background: rgba(0, 8, 10, 0.82);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 0 34px rgba(35, 220, 188, 0.08);
+}
+
+.workflowSourceCard {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  min-height: 116px;
+  padding: 18px;
+}
+
+.workflowIconBox {
+  display: grid;
+  place-items: center;
+  width: 74px;
+  height: 74px;
+  border: 1px solid rgba(35, 220, 188, 0.42);
+  border-radius: 8px;
+  color: var(--color-primary);
+  background: radial-gradient(circle at 50% 40%, rgba(35, 220, 188, 0.18), rgba(35, 220, 188, 0.04));
+}
+
+.workflowSourceCard h3 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+}
+
+.workflowSourceCard p {
+  margin: 8px 0 0;
+  color: #a9cfc8;
+  font-size: 0.96rem;
+  line-height: 1.45;
+}
+
+.workflowCoreWrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+
+.workflowCore {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 310px);
+  min-height: 300px;
+  padding: 30px 22px;
+  text-align: center;
+  border-color: rgba(35, 220, 188, 0.72);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(35, 220, 188, 0.15), transparent 10rem),
+    rgba(0, 8, 10, 0.9);
+  box-shadow:
+    inset 0 0 0 1px rgba(35, 220, 188, 0.18),
+    0 0 48px rgba(35, 220, 188, 0.22),
+    0 0 96px rgba(35, 220, 188, 0.1);
+}
+
+.workflowCoreIcon {
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 82px;
+  margin-bottom: 18px;
+  color: var(--color-primary);
+  border-radius: 8px;
+  background: rgba(35, 220, 188, 0.08);
+}
+
+.workflowCore h3 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: clamp(1.4rem, 2.4vw, 1.95rem);
+  line-height: 1.18;
+}
+
+.workflowActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 22px;
+}
+
+.workflowActions span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1px solid rgba(35, 220, 188, 0.3);
+  border-radius: 999px;
+  color: #b7fff4;
+  font-weight: 800;
+  background: rgba(3, 20, 18, 0.86);
+}
+
+.workflowConnectorLeft,
+.workflowConnectorRight {
+  position: absolute;
+  top: 50%;
+  width: 92px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(35, 220, 188, 0.8), rgba(35, 220, 188, 0.2));
+  transform: translateY(-50%);
+}
+
+.workflowConnectorLeft {
+  left: -88px;
+}
+
+.workflowConnectorRight {
+  right: -88px;
+}
+
+.workflowConnectorLeft::after,
+.workflowConnectorRight::after {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  content: "";
+  border-radius: 999px;
+  background: #9ffff4;
+  box-shadow: 0 0 18px rgba(35, 220, 188, 0.72);
+  transform: translateY(-50%);
+}
+
+.workflowConnectorLeft::after {
+  right: 0;
+}
+
+.workflowConnectorRight::after {
+  left: 0;
+}
+
+.workflowOutput {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+}
+
+.workflowWindow {
+  width: min(100%, 390px);
+  min-height: 282px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(35, 220, 188, 0.12), transparent 12rem),
+    rgba(0, 8, 10, 0.86);
+}
+
+.workflowWindowBar {
+  display: flex;
+  gap: 8px;
+  padding: 15px 18px;
+  border-bottom: 1px solid rgba(35, 220, 188, 0.18);
+}
+
+.workflowWindowBar span {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(183, 255, 248, 0.82);
+}
+
+.workflowWindowBody {
+  display: grid;
+  grid-template-columns: 76px minmax(0, 1fr);
+  gap: 14px;
+  padding: 18px;
+}
+
+.workflowWindowSidebar {
+  display: grid;
+  align-content: start;
+  justify-items: center;
+  gap: 12px;
+  color: var(--color-primary);
+}
+
+.workflowWindowSidebar svg {
+  width: 52px;
+  height: 52px;
+  padding: 12px;
+  border: 1px solid rgba(35, 220, 188, 0.22);
+  border-radius: 999px;
+  background: rgba(35, 220, 188, 0.1);
+}
+
+.workflowWindowSidebar span,
+.workflowWindowCard span,
+.workflowWindowCard small {
+  display: block;
+  border-radius: 999px;
+  background: rgba(98, 228, 213, 0.18);
+}
+
+.workflowWindowSidebar span {
+  width: 42px;
+  height: 8px;
+}
+
+.workflowWindowCards {
+  display: grid;
+  gap: 12px;
+}
+
+.workflowWindowCard {
+  position: relative;
+  display: grid;
+  align-content: center;
+  gap: 10px;
+  min-height: 62px;
+  padding: 14px;
+  border: 1px solid rgba(35, 220, 188, 0.16);
+  border-radius: 8px;
+  background: rgba(9, 24, 22, 0.78);
+}
+
+.workflowWindowCardActive {
+  border-color: rgba(35, 220, 188, 0.48);
+  box-shadow: 0 0 22px rgba(35, 220, 188, 0.12);
+}
+
+.workflowWindowCard span {
+  width: 74%;
+  height: 10px;
+}
+
+.workflowWindowCard small {
+  width: 48%;
+  height: 9px;
+}
+
+.workflowWindowCard svg {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  color: var(--color-button-primary-text);
+  background: var(--color-primary);
+  border-radius: 999px;
+  transform: translateY(-50%);
+}
+
+.workflowOutput strong {
+  color: var(--color-primary);
+  font-size: clamp(1.35rem, 2.2vw, 2rem);
+  text-align: center;
+}
+
+.workflowTagline {
+  display: inline-flex;
+  align-items: center;
+  justify-self: center;
+  gap: 16px;
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: clamp(1.15rem, 2vw, 1.8rem);
+  line-height: 1.35;
+  text-align: center;
+}
+
+.workflowTagline span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 54px;
+  height: 54px;
+  border: 1px solid rgba(35, 220, 188, 0.3);
+  border-radius: 999px;
+  color: var(--color-primary);
+  background: rgba(3, 20, 18, 0.82);
+}
+
 .downloadPanel {
   display: grid;
   justify-items: center;
@@ -839,6 +1200,25 @@ h1 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .howItWorksFlow {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+
+  .workflowCoreWrap {
+    justify-items: center;
+  }
+
+  .workflowConnectorLeft,
+  .workflowConnectorRight {
+    display: none;
+  }
+
+  .workflowCore,
+  .workflowWindow {
+    width: 100%;
+  }
+
   .sectionHeader {
     display: grid;
   }
@@ -1005,6 +1385,56 @@ h1 {
 
   .featureGrid {
     grid-template-columns: 1fr;
+  }
+
+  .howItWorksSection {
+    padding: 62px 0;
+  }
+
+  .howItWorksShell {
+    gap: 34px;
+  }
+
+  .howItWorksHeader {
+    gap: 14px;
+  }
+
+  .howItWorksEyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.28em;
+  }
+
+  .workflowSourceCard {
+    grid-template-columns: 58px minmax(0, 1fr);
+    gap: 14px;
+    min-height: 100px;
+    padding: 14px;
+  }
+
+  .workflowIconBox {
+    width: 58px;
+    height: 58px;
+  }
+
+  .workflowCore {
+    min-height: 260px;
+    padding: 24px 16px;
+  }
+
+  .workflowWindowBody {
+    grid-template-columns: 58px minmax(0, 1fr);
+    padding: 14px;
+  }
+
+  .workflowWindowSidebar svg {
+    width: 44px;
+    height: 44px;
+  }
+
+  .workflowTagline {
+    display: grid;
+    justify-items: center;
+    gap: 12px;
   }
 
   .downloadPanel {
