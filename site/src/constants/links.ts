@@ -7,7 +7,7 @@ export type DownloadTarget = {
   readonly fileType: "exe" | "msi" | "deb";
   readonly osLabel: string;
   readonly badge: string;
-  readonly iconKey: "windows" | "linux" | "debian" | "ubuntu";
+  readonly iconKeys: readonly ("windows" | "linux" | "debian" | "ubuntu" | "mint")[];
   readonly priority: number;
 };
 
@@ -31,7 +31,7 @@ export const DOWNLOADS: readonly DownloadTarget[] = [
     fileType: "exe",
     osLabel: "Windows",
     badge: ".exe",
-    iconKey: "windows",
+    iconKeys: ["windows"],
     priority: 1,
   },
   {
@@ -43,7 +43,7 @@ export const DOWNLOADS: readonly DownloadTarget[] = [
     fileType: "msi",
     osLabel: "Windows MSI",
     badge: ".msi",
-    iconKey: "windows",
+    iconKeys: ["windows"],
     priority: 2,
   },
   {
@@ -55,7 +55,7 @@ export const DOWNLOADS: readonly DownloadTarget[] = [
     fileType: "deb",
     osLabel: "Linux",
     badge: ".deb",
-    iconKey: "debian",
+    iconKeys: ["ubuntu", "mint", "debian"],
     priority: 3,
   },
 ] as const;

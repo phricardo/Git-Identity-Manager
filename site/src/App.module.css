@@ -666,6 +666,17 @@ h1 {
     4px 4px 0 #152c2c;
 }
 
+.downloadIconGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 auto;
+}
+
+.downloadIconGroup svg {
+  flex: 0 0 auto;
+}
+
 .primaryPill:hover,
 .downloadPill:hover,
 .backLink:hover {

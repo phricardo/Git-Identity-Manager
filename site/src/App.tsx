@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { DebianIcon, LinuxIcon, UbuntuIcon, WindowsIcon, type OsIconProps } from "./components/OsIcons";
+import { DebianIcon, LinuxIcon, MintIcon, UbuntuIcon, WindowsIcon, type OsIconProps } from "./components/OsIcons";
 import logoUrl from "./assets/logo.svg";
 import screenshotUrl from "./assets/app-screen--001.png";
 import {
@@ -26,9 +26,10 @@ import {
 } from "./constants/links";
 import styles from "./App.module.css";
 
-const downloadIcons: Record<DownloadTarget["iconKey"], (props: OsIconProps) => JSX.Element> = {
+const downloadIcons: Record<DownloadTarget["iconKeys"][number], (props: OsIconProps) => JSX.Element> = {
   debian: DebianIcon,
   linux: LinuxIcon,
+  mint: MintIcon,
   ubuntu: UbuntuIcon,
   windows: WindowsIcon,
 };
@@ -39,16 +40,16 @@ const heroOsLogos = [
     label: "Windows",
   },
   {
-    icon: LinuxIcon,
-    label: "Linux",
+    icon: UbuntuIcon,
+    label: "Ubuntu",
+  },
+  {
+    icon: MintIcon,
+    label: "Linux Mint",
   },
   {
     icon: DebianIcon,
     label: "Debian",
-  },
-  {
-    icon: UbuntuIcon,
-    label: "Ubuntu",
   },
 ] as const;
 
@@ -404,14 +405,18 @@ function DownloadButton({
   download: DownloadTarget;
   variant: "primary" | "secondary";
 }) {
-  const Icon = downloadIcons[download.iconKey];
-
   return (
     <a
       className={variant === "primary" ? styles.primaryPill : styles.downloadPill}
       href={download.href}
     >
-      <Icon size={20} aria-hidden="true" />
+      <span className={styles.downloadIconGroup} aria-hidden="true">
+        {download.iconKeys.map((iconKey) => {
+          const Icon = downloadIcons[iconKey];
+
+          return <Icon key={iconKey} size={20} />;
+        })}
+      </span>
       <span>{download.osLabel}</span>
       <small>{download.badge}</small>
     </a>
