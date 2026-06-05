@@ -185,7 +185,13 @@ export function App() {
       <section className={styles.screenshotSection} aria-labelledby="screenshot-title">
         <div className={styles.shell}>
           <div className={styles.screenshotGrid}>
-            <div>
+            <motion.div
+              className={styles.screenshotCopy}
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.35 }}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+            >
               <span className={styles.codeLabel}>preview_001</span>
               <h2 id="screenshot-title">
                 Clear visibility into{" "}
@@ -206,7 +212,7 @@ export function App() {
                   Source code
                 </a>
               </div>
-            </div>
+            </motion.div>
             <motion.div
               className={styles.screenshotFrame}
               initial={{ opacity: 0, x: 18 }}

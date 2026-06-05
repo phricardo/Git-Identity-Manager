@@ -432,8 +432,13 @@ h1 {
 .screenshotGrid {
   display: grid;
   grid-template-columns: minmax(300px, 0.62fr) minmax(640px, 1.38fr);
-  align-items: center;
+  align-items: start;
   gap: 56px;
+}
+
+.screenshotCopy {
+  position: sticky;
+  top: calc(var(--nav-height) + 24px);
 }
 
 .screenshotGrid h2 {
@@ -823,6 +828,10 @@ h1 {
 
   .appScreenshot {
     border-radius: 9px;
+  }
+
+  .screenshotCopy {
+    position: static;
   }
 
   .sectionHeader h2,
