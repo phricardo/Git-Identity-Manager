@@ -11,7 +11,7 @@ import {
   UserRoundCog,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { DebianIcon, LinuxIcon, UbuntuIcon, WindowsIcon, type OsIconProps } from "./components/OsIcons";
 import logoUrl from "./assets/logo.svg";
@@ -32,6 +32,25 @@ const downloadIcons: Record<DownloadTarget["iconKey"], (props: OsIconProps) => J
   ubuntu: UbuntuIcon,
   windows: WindowsIcon,
 };
+
+const heroOsLogos = [
+  {
+    icon: WindowsIcon,
+    label: "Windows",
+  },
+  {
+    icon: LinuxIcon,
+    label: "Linux",
+  },
+  {
+    icon: DebianIcon,
+    label: "Debian",
+  },
+  {
+    icon: UbuntuIcon,
+    label: "Ubuntu",
+  },
+] as const;
 
 const features = [
   {
@@ -58,8 +77,41 @@ const features = [
 
 export function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const heroMockupRef = useRef<HTMLDivElement>(null);
   const isDownloadsPage = window.location.pathname === ALL_DOWNLOADS_PATH;
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+  const resetHeroPerspective = () => {
+    const mockup = heroMockupRef.current;
+
+    if (!mockup) {
+      return;
+    }
+
+    mockup.style.setProperty("--hero-rotate-x", "0deg");
+    mockup.style.setProperty("--hero-rotate-y", "0deg");
+    mockup.style.setProperty("--hero-lift", "0px");
+    mockup.style.setProperty("--hero-glare-x", "50%");
+    mockup.style.setProperty("--hero-glare-y", "42%");
+  };
+  const updateHeroPerspective = (event: React.MouseEvent<HTMLDivElement>) => {
+    const mockup = heroMockupRef.current;
+
+    if (!mockup || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      return;
+    }
+
+    const bounds = mockup.getBoundingClientRect();
+    const x = (event.clientX - bounds.left) / bounds.width;
+    const y = (event.clientY - bounds.top) / bounds.height;
+    const rotateY = (x - 0.5) * 10;
+    const rotateX = (0.5 - y) * 8;
+
+    mockup.style.setProperty("--hero-rotate-x", `${rotateX.toFixed(2)}deg`);
+    mockup.style.setProperty("--hero-rotate-y", `${rotateY.toFixed(2)}deg`);
+    mockup.style.setProperty("--hero-lift", "-4px");
+    mockup.style.setProperty("--hero-glare-x", `${(x * 100).toFixed(1)}%`);
+    mockup.style.setProperty("--hero-glare-y", `${(y * 100).toFixed(1)}%`);
+  };
 
   if (isDownloadsPage) {
     return <DownloadsPage />;
@@ -135,13 +187,24 @@ export function App() {
                   Source code
                 </a>
               </div>
+
+              <div className={styles.heroOsLogos} aria-label="Supported operating systems">
+                {heroOsLogos.map((os) => {
+                  const Icon = os.icon;
+
+                  return <Icon key={os.label} size={26} title={os.label} />;
+                })}
+              </div>
             </motion.div>
 
             <motion.div
-              className={`${styles.mockupWindow} ${styles.screenshotFrame}`}
+              className={`${styles.mockupWindow} ${styles.screenshotFrame} ${styles.appShell}`}
+              ref={heroMockupRef}
               initial={{ opacity: 0, scale: 0.98, y: 16 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 0.65, delay: 0.12, ease: "easeOut" }}
+              onMouseMove={updateHeroPerspective}
+              onMouseLeave={resetHeroPerspective}
             >
               <img
                 className={styles.appScreenshot}

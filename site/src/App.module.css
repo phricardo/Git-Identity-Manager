@@ -247,6 +247,29 @@ h1 {
   margin-bottom: 14px;
 }
 
+.heroOsLogos {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 4rem;
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.heroOsLogos svg {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  opacity: 0.78;
+  transition:
+    opacity 160ms ease,
+    transform 160ms ease;
+}
+
+.heroOsLogos svg:hover {
+  opacity: 0.92;
+  transform: translateY(-1px);
+}
+
 .previewActions {
   margin-top: 22px;
   margin-bottom: 0;
@@ -341,12 +364,138 @@ h1 {
     inset 0 0 62px rgba(35, 220, 188, 0.08);
 }
 
+.appShell {
+  --app-shell-border-size: 2px;
+  --app-shell-glow-opacity: 0.34;
+  --hero-glare-x: 50%;
+  --hero-glare-y: 42%;
+  --hero-glare-opacity: 0;
+  --hero-lift: 0px;
+  --hero-rotate-x: 0deg;
+  --hero-rotate-y: 0deg;
+  overflow: hidden;
+  border-radius: 14px;
+  backdrop-filter: blur(12px);
+}
+
+.appShell::before {
+  inset: 0;
+  z-index: 3;
+  padding: var(--app-shell-border-size);
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(12, 116, 102, 0.12) 14%,
+      rgba(26, 245, 198, 0.46) 28%,
+      rgba(35, 220, 188, 0.92) 40%,
+      rgba(183, 255, 248, 0.72) 50%,
+      rgba(13, 116, 102, 0.38) 62%,
+      rgba(35, 220, 188, 0.16) 72%,
+      transparent 78%,
+      transparent 100%
+    );
+  background-size: 220% 100%;
+  filter: drop-shadow(0 0 8px rgba(35, 220, 188, 0.28));
+  opacity: 0.9;
+  animation: borderLightSweep 8s linear infinite;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.appShell::after {
+  inset: 0;
+  z-index: 3;
+  border: 0;
+  background:
+    radial-gradient(
+      circle at var(--hero-glare-x) var(--hero-glare-y),
+      rgba(183, 255, 248, calc(0.14 * var(--hero-glare-opacity))),
+      rgba(35, 220, 188, calc(0.07 * var(--hero-glare-opacity))) 18%,
+      transparent 38%
+    );
+  transition: background 180ms ease-out;
+  box-shadow:
+    0 0 18px rgba(35, 220, 188, var(--app-shell-glow-opacity)),
+    0 0 38px rgba(26, 245, 198, 0.14),
+    0 0 58px rgba(13, 116, 102, 0.18),
+    inset 0 0 20px rgba(35, 220, 188, 0.12),
+    inset 0 0 56px rgba(12, 116, 102, 0.08);
+}
+
 .appScreenshot {
+  position: relative;
+  z-index: 1;
   display: block;
   width: 100%;
   height: auto;
   border-radius: 13px;
   object-fit: contain;
+}
+
+@keyframes borderLightSweep {
+  from {
+    background-position: 160% 50%;
+  }
+
+  to {
+    background-position: -160% 50%;
+  }
+}
+
+@keyframes heroPerspectiveIdle {
+  0%,
+  100% {
+    transform: perspective(1200px) rotateX(0deg) rotateY(0deg) translateY(0);
+  }
+
+  35% {
+    transform: perspective(1200px) rotateX(1.4deg) rotateY(-1.8deg) translateY(-2px);
+  }
+
+  70% {
+    transform: perspective(1200px) rotateX(-1deg) rotateY(1.4deg) translateY(-1px);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .appShell {
+    transform-style: preserve-3d;
+    transform:
+      perspective(1200px)
+      rotateX(var(--hero-rotate-x))
+      rotateY(var(--hero-rotate-y))
+      translateY(var(--hero-lift));
+    transition:
+      transform 180ms ease-out,
+      box-shadow 180ms ease-out;
+    will-change: transform;
+    animation: heroPerspectiveIdle 10s ease-in-out infinite;
+  }
+
+  .appShell:hover {
+    --hero-glare-opacity: 1;
+    animation: none;
+    box-shadow:
+      0 0 0 1px rgba(35, 220, 188, 0.18),
+      0 0 28px rgba(35, 220, 188, 0.34),
+      0 0 86px rgba(35, 220, 188, 0.2),
+      0 30px 96px rgba(0, 0, 0, 0.64);
+  }
+
+  .appShell:hover .appScreenshot {
+    transform: translateZ(18px);
+  }
+
+  .appScreenshot {
+    transition: transform 180ms ease-out;
+  }
 }
 
 .section,
@@ -826,6 +975,31 @@ h1 {
       inset 0 0 36px rgba(35, 220, 188, 0.07);
   }
 
+  .appShell {
+    --app-shell-border-size: 1px;
+    --app-shell-glow-opacity: 0.22;
+    border-radius: 10px;
+    transform: none;
+    animation: none;
+  }
+
+  .appShell::before {
+    inset: 0;
+    padding: var(--app-shell-border-size);
+    filter: drop-shadow(0 0 6px rgba(35, 220, 188, 0.22));
+    opacity: 0.78;
+  }
+
+  .appShell::after {
+    inset: 0;
+    box-shadow:
+      0 0 14px rgba(35, 220, 188, var(--app-shell-glow-opacity)),
+      0 0 28px rgba(26, 245, 198, 0.1),
+      0 0 34px rgba(13, 116, 102, 0.12),
+      inset 0 0 14px rgba(35, 220, 188, 0.1),
+      inset 0 0 32px rgba(12, 116, 102, 0.06);
+  }
+
   .appScreenshot {
     border-radius: 9px;
   }
@@ -852,6 +1026,17 @@ h1 {
   .actions {
     display: grid;
     grid-template-columns: 1fr;
+  }
+
+  .heroOsLogos {
+    gap: 1.25rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+  }
+
+  .heroOsLogos svg {
+    width: 28px;
+    height: 28px;
   }
 
   .primaryButton,
