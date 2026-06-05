@@ -15,6 +15,10 @@
   width: min(960px, calc(100% - (var(--site-gutter) * 2)));
 }
 
+.downloadsPage .downloadsShell {
+  flex: 1;
+}
+
 .hero {
   position: relative;
   min-height: 100svh;
@@ -522,8 +526,10 @@ h1 {
 
 .downloadsPage {
   --site-gutter: 32px;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
-  padding: 18px 0 78px;
+  padding: 18px 0 0;
   background: var(--color-bg);
 }
 
