@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="960" viewBox="0 0 1440 960" role="img" aria-labelledby="title desc">
+  <title id="title">Git Identity Manager app screenshot placeholder</title>
+  <desc id="desc">A dark interface placeholder representing the desktop app.</desc>
+  <rect width="1440" height="960" fill="#061211"/>
+  <rect x="48" y="48" width="1344" height="864" rx="18" fill="#0a1b19" stroke="#1af5c6" stroke-opacity=".52" stroke-width="2"/>
+  <rect x="80" y="84" width="1280" height="68" rx="8" fill="#0f2a26"/>
+  <circle cx="114" cy="118" r="10" fill="#1af5c6"/>
+  <circle cx="146" cy="118" r="10" fill="#0d7466"/>
+  <circle cx="178" cy="118" r="10" fill="#12463f"/>
+  <rect x="1120" y="108" width="220" height="16" rx="3" fill="#1af5c6" opacity=".68"/>
+  <rect x="80" y="188" width="286" height="716" rx="10" fill="#081715" stroke="#163f39"/>
+  <rect x="112" y="230" width="170" height="18" rx="3" fill="#1af5c6"/>
+  <rect x="112" y="292" width="214" height="42" rx="6" fill="#102c28"/>
+  <rect x="112" y="352" width="214" height="42" rx="6" fill="#0d231f"/>
+  <rect x="112" y="412" width="214" height="42" rx="6" fill="#0d231f"/>
+  <rect x="408" y="188" width="952" height="244" rx="10" fill="#0d211e" stroke="#163f39"/>
+  <rect x="448" y="232" width="312" height="22" rx="3" fill="#d8fff7" opacity=".9"/>
+  <rect x="448" y="284" width="776" height="14" rx="3" fill="#82bcb1" opacity=".64"/>
+  <rect x="448" y="320" width="620" height="14" rx="3" fill="#82bcb1" opacity=".36"/>
+  <rect x="448" y="370" width="180" height="38" rx="6" fill="#1af5c6"/>
+  <rect x="408" y="464" width="292" height="260" rx="10" fill="#081715" stroke="#163f39"/>
+  <rect x="740" y="464" width="292" height="260" rx="10" fill="#081715" stroke="#163f39"/>
+  <rect x="1060" y="464" width="300" height="260" rx="10" fill="#081715" stroke="#163f39"/>
+  <rect x="440" y="506" width="104" height="18" rx="3" fill="#1af5c6" opacity=".9"/>
+  <rect x="772" y="506" width="136" height="18" rx="3" fill="#1af5c6" opacity=".9"/>
+  <rect x="1092" y="506" width="122" height="18" rx="3" fill="#1af5c6" opacity=".9"/>
+  <rect x="440" y="566" width="220" height="12" rx="3" fill="#82bcb1" opacity=".5"/>
+  <rect x="772" y="566" width="220" height="12" rx="3" fill="#82bcb1" opacity=".5"/>
+  <rect x="1092" y="566" width="220" height="12" rx="3" fill="#82bcb1" opacity=".5"/>
+  <rect x="408" y="756" width="952" height="148" rx="10" fill="#071412" stroke="#163f39"/>
+  <text x="448" y="820" fill="#1af5c6" font-family="monospace" font-size="28">git identity status --all</text>
+  <text x="448" y="864" fill="#d8fff7" font-family="monospace" font-size="20">profiles: 4   github accounts: 2   diagnostics: clean</text>
+</svg>

@@ -1,0 +1,51 @@
+:root {
+  --color-bg: #000506;
+  --color-primary: #23dcbc;
+  --color-secondary-border: #152c2c;
+  --color-secondary-bg: #00080a;
+  --color-secondary-icon: #b4b7b6;
+  --color-text-primary: #ffffff;
+  --color-button-primary-text: #000000;
+  --font-sans: "Roboto", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-code: "Fira Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  --font-impact: "Press Start 2P", var(--font-code);
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+  font-size: 16px;
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--color-bg);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+body::selection {
+  color: var(--color-button-primary-text);
+  background: var(--color-primary);
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
