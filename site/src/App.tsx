@@ -172,7 +172,7 @@ export function App() {
               <span className={styles.codeLabel}>preview_001</span>
               <h2 id="screenshot-title">
                 Clear visibility into{" "}
-                <span className={styles.markerText}>every local</span>{" "}
+                <span className={styles.impactText}>every local</span>{" "}
                 <span className={styles.impactText}>identity.</span>
               </h2>
               <p>
