@@ -645,12 +645,11 @@ h1 {
 }
 
 .workflowSources {
+  position: relative;
   display: grid;
   gap: 18px;
 }
 
-.workflowSourceCard,
-.workflowCore,
 .workflowWindow {
   border: 1px solid rgba(148, 163, 160, 0.14);
   border-radius: 8px;
@@ -660,13 +659,25 @@ h1 {
     0 18px 54px rgba(0, 0, 0, 0.28);
 }
 
+.workflowSources::after {
+  position: absolute;
+  left: 16px;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, rgba(148, 163, 160, 0.16), rgba(148, 163, 160, 0.04));
+}
+
 .workflowSourceCard {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 74px minmax(0, 1fr);
   align-items: center;
-  gap: 18px;
+  gap: 20px;
   min-height: 116px;
-  padding: 18px;
+  padding: 14px 0;
 }
 
 .workflowIconBox {
@@ -675,10 +686,12 @@ h1 {
   width: 74px;
   height: 74px;
   border: 1px solid rgba(148, 163, 160, 0.16);
-  border-radius: 8px;
+  border-radius: 999px;
   color: var(--color-primary);
   background: rgba(8, 18, 17, 0.72);
-  box-shadow: 0 0 18px rgba(35, 220, 188, 0.08);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.28),
+    0 0 18px rgba(35, 220, 188, 0.08);
 }
 
 .workflowSourceCard h3 {
@@ -705,26 +718,23 @@ h1 {
   display: grid;
   justify-items: center;
   width: min(100%, 310px);
-  min-height: 300px;
-  padding: 30px 22px;
+  min-height: 260px;
+  padding: 18px 22px;
   text-align: center;
-  border-color: rgba(148, 163, 160, 0.16);
-  background: rgba(0, 8, 10, 0.9);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 24px 72px rgba(0, 0, 0, 0.34);
 }
 
 .workflowCoreIcon {
   display: grid;
   place-items: center;
-  width: 82px;
-  height: 82px;
-  margin-bottom: 18px;
+  width: 88px;
+  height: 88px;
+  margin-bottom: 20px;
   color: var(--color-primary);
   border: 1px solid rgba(148, 163, 160, 0.14);
-  border-radius: 8px;
-  background: rgba(8, 18, 17, 0.72);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(35, 220, 188, 0.1), transparent 62%),
+    rgba(8, 18, 17, 0.58);
   box-shadow: 0 0 22px rgba(35, 220, 188, 0.1);
 }
 
@@ -734,31 +744,45 @@ h1 {
 }
 
 .workflowCore h3 {
+  position: relative;
   margin: 0;
+  padding-bottom: 18px;
   color: var(--color-text-primary);
   font-size: clamp(1.25rem, 2vw, 1.65rem);
   line-height: 1.18;
 }
 
+.workflowCore h3::after {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 132px;
+  height: 1px;
+  content: "";
+  background: linear-gradient(90deg, transparent, rgba(148, 163, 160, 0.18), transparent);
+  transform: translateX(-50%);
+}
+
 .workflowActions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: center;
-  gap: 8px;
-  margin-top: 22px;
+  gap: 0;
+  margin-top: 20px;
 }
 
 .workflowActions span {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  min-height: 38px;
-  padding: 0 13px;
-  border: 1px solid rgba(148, 163, 160, 0.16);
-  border-radius: 999px;
+  min-height: 34px;
+  padding: 0 15px;
   color: #dce8e6;
   font-weight: 800;
-  background: rgba(8, 18, 17, 0.72);
+}
+
+.workflowActions span + span {
+  border-left: 1px solid rgba(148, 163, 160, 0.18);
 }
 
 .workflowActions span svg {
@@ -902,7 +926,11 @@ h1 {
   width: min(100%, 390px);
   min-height: 282px;
   overflow: hidden;
-  background: rgba(0, 8, 10, 0.86);
+  border-color: rgba(148, 163, 160, 0.13);
+  background: rgba(0, 8, 10, 0.62);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 18px 54px rgba(0, 0, 0, 0.22);
 }
 
 .workflowWindowBar {
@@ -971,12 +999,14 @@ h1 {
   padding: 14px;
   border: 1px solid rgba(148, 163, 160, 0.12);
   border-radius: 8px;
-  background: rgba(9, 24, 22, 0.78);
+  background: linear-gradient(180deg, rgba(18, 27, 28, 0.68), rgba(7, 14, 15, 0.78));
 }
 
 .workflowWindowCardActive {
   border-color: rgba(148, 163, 160, 0.18);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  box-shadow:
+    inset 3px 0 0 rgba(35, 220, 188, 0.78),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
 }
 
 .workflowWindowCard span {
@@ -1000,7 +1030,7 @@ h1 {
 }
 
 .workflowOutput strong {
-  color: var(--color-primary);
+  color: #b7c5c2;
   font-size: clamp(1.2rem, 2vw, 1.55rem);
   text-align: center;
 }
