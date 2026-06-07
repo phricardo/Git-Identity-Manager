@@ -98,10 +98,10 @@ Git Identity Manager was created to solve this daily developer pain with a simpl
 Current stable support:
 
 * Windows
+* Linux (.deb): Ubuntu, Debian, Linux Mint, and other Debian/Ubuntu-based distributions.
 
 Planned / in progress:
 
-* Linux
 * macOS
 
 > macOS support may require additional signing or security steps depending on the build and distribution method.
